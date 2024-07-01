@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 
-export default function LoginScreen({ navigation }) {
+export default function CambiarContra({ navigation }) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -11,24 +11,17 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.circle2} />
         <View style={styles.circle1} />
         <Image source={require('../img/logoSF.png')} style={styles.logo} />
-        <Text style={styles.title}>Inicia sesión</Text>
+        <Text style={styles.title}>Código de recuperación</Text>
         <Text style={styles.brand}>Sports<Text style={styles.brandHighlight}>Fusion</Text></Text>
         
-        <TextInput style={styles.input} placeholder="Correo electrónico" keyboardType="email-address" />
-        <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry />
-
-        <TouchableOpacity onPress={() => navigation.navigate('RecuContra')}>
-          <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Contraseña nueva" secureTextEntry />
+        <TextInput style={styles.input} placeholder="Confirmar contraseña" secureTextEntry />
 
         <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('')}>
-          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Iniciar sesión</Text>
+          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Cambiar contraseña</Text>
         </TouchableOpacity>
 
         <View style={styles.footer} />
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text>¿No tienes una cuenta? <Text style={styles.createAccount}>Crea una</Text></Text>
-        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -75,6 +68,7 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 40,
     fontWeight: 'bold',
+    marginBottom: 30, // Ajusta este valor para el espacio deseado
   },
   brandHighlight: {
     color: '#FFA500',
@@ -87,6 +81,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingHorizontal: 10,
     marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 20,
   },
   forgotPassword: {
     alignSelf: 'flex-end',

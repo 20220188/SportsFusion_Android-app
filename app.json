@@ -9,7 +9,9 @@
     "splash": {
       "image": "./assets/logoSF.png",
       "resizeMode": "contain",
-      "backgroundColor": "#140D2B"
+      "backgroundColor": "#140D2B",
+      "height": "100px",
+      "width":"100px"
     },
     "ios": {
       "supportsTablet": true
