@@ -43,11 +43,11 @@ export default function Dashboard({ navigation }) {
           <Icon name="home-outline" size={25} color="#000" />
           <Text style={styles.tabText}></Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Carrito')}>
           <Icon name="cart-outline" size={25} color="#000" />
           <Text style={styles.tabText}></Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Perfil')}>
           <Icon name="person-outline" size={25} color="#000" />
           <Text style={styles.tabText}></Text>
         </TouchableOpacity>
