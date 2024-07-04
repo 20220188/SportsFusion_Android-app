@@ -42,7 +42,7 @@ const data = [
 ];
 
 const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <View style={styles.itemContainer} >
       {item.trending && <Text style={styles.trendingLabel}>Trending</Text>}
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Text style={styles.itemName}>{item.name}</Text>
@@ -54,7 +54,7 @@ const renderItem = ({ item }) => (
     </View>
 );
 
-export default function LoginScreen({ navigation }) {
+export default function VistaFutbol({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -62,7 +62,7 @@ export default function LoginScreen({ navigation }) {
         <Icon name="search-outline" size={24} color="black" />
       </View>
       <View style={styles.filters}>
-        <Text style={styles.filterText}>Popular</Text>
+        <Text style={styles.filterText} onPress={() => navigation.navigate('DetalleProducto')}>Popular</Text>
         <Text style={styles.filterText}>Hombre</Text>
         <Text style={styles.filterText}>Mujer</Text>
         <Text style={styles.filterText}>Retro</Text>
@@ -73,6 +73,7 @@ export default function LoginScreen({ navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        
       />
     </View>
   );
