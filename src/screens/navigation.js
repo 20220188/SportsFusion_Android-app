@@ -12,6 +12,8 @@ import VistaFutbol from './VistaFutbol';
 import DetalleProducto from './DetalleProducto';
 import Perfil from './Perfil';
 import Carrito from './Carrito';
+
+
 const Stack = createStackNavigator();
 
 function AppNavigator() {
