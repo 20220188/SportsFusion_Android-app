@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const ShoppingCart = () => {
   return (
@@ -84,56 +85,56 @@ const ShoppingCart = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: wp('5%'),
   },
   header: {
-    fontSize: 24,
+    fontSize: hp('3%'),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: hp('2%'),
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: hp('2%'),
   },
   image: {
-    width: 60,
-    height: 60,
-    marginRight: 20,
+    width: wp('15%'),
+    height: wp('15%'),
+    marginRight: wp('5%'),
   },
   details: {
     flex: 1,
   },
   name: {
-    fontSize: 18,
+    fontSize: hp('2.5%'),
     fontWeight: 'bold',
   },
   price: {
-    fontSize: 16,
+    fontSize: hp('2%'),
     color: '#888',
-    marginBottom: 10,
+    marginBottom: hp('1%'),
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   quantity: {
-    marginHorizontal: 10,
-    fontSize: 16,
+    marginHorizontal: wp('2%'),
+    fontSize: hp('2%'),
   },
   quantityButton: {
     backgroundColor: '#ddd',
     borderRadius: 5,
-    padding: 5,
+    padding: wp('1%'),
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: hp('3%'),
   },
   total: {
-    fontSize: 18,
+    fontSize: hp('2.5%'),
     fontWeight: 'bold',
   },
   payButton: {
