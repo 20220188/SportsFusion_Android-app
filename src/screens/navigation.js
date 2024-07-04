@@ -10,7 +10,8 @@ import CambiarCont from './CambiarContra';
 import Dashboard from './Dashboard';
 import VistaFutbol from './VistaFutbol';
 import DetalleProducto from './DetalleProducto';
-
+import Perfil from './Perfil';
+import Carrito from './Carrito';
 const Stack = createStackNavigator();
 
 function AppNavigator() {
@@ -25,6 +26,8 @@ function AppNavigator() {
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
         <Stack.Screen name="VistaFutbol" component={VistaFutbol} options={{ headerShown: false }} />
         <Stack.Screen name="DetalleProducto" component={DetalleProducto} options={{ headerShown: false }} />
+        <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }} />
+        <Stack.Screen name="Carrito" component={Carrito} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
