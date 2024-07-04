@@ -1,111 +1,275 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Button } from 'react-native';
 
 export default function Perfil({ navigation }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [alias, setAlias] = useState('');
+  const [name, setName] = useState('Kevin Rodriguez');
+  const [email, setEmail] = useState('kevin@gmail.com');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleEditProfile = () => {
+    setModalVisible(true);
+  };
+
+  const handleSaveProfile = () => {
+    setModalVisible(false);
+    // Aquí puedes agregar lógica para guardar los datos editados
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.circle2} />
-        <View style={styles.circle1} />
-        <Image source={require('../img/logoSF.png')} style={styles.logo} />
-        <Text style={styles.title}>Inicia sesión</Text>
-        <Text style={styles.brand}>Sports<Text style={styles.brandHighlight}>Fusion</Text></Text>
-        
-        <TextInput style={styles.input} placeholder="Correo electrónico" keyboardType="email-address" />
-        <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry />
-
-        <TouchableOpacity onPress={() => navigation.navigate('RecuContra')}>
-          <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.profileContainer}>
+        <Image
+          source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
+          style={styles.profilePic}
+        />
+        <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+          <Text style={styles.editButtonText}>Editar Perfil</Text>
         </TouchableOpacity>
+        <View style={styles.infoContainer}>
+          <Text style={styles.label}>Nombre</Text>
+          <TextInput
+            style={styles.infoText}
+            value={name}
+            onChangeText={setName}
+          />
+          <Text style={styles.label}>Correo</Text>
+          <TextInput
+            style={styles.infoText}
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+      </View>
+      <View style={styles.likesContainer}>
+        <Text style={styles.likesTitle}>Tus me gustas</Text>
+        <View style={styles.itemsContainer}>
+          <View style={styles.item}>
+            <Image
+              source={{ uri: 'https://example.com/bvb-jersey-url' }} // Reemplaza con la URL de la imagen de la camiseta
+              style={styles.itemImage}
+            />
+            <Text style={styles.itemText}>BVB Jersey</Text>
+            <Text style={styles.itemSubText}>Mán. 2024/25</Text>
+          </View>
+          <View style={styles.item}>
+            <Image
+              source={{ uri: 'https://example.com/chelsea-jersey-url' }} // Reemplaza con la URL de la imagen de la camiseta
+              style={styles.itemImage}
+            />
+            <Text style={styles.itemText}>Chelsea Jersey</Text>
+            <Text style={styles.itemSubText}>Mán. 2024/25</Text>
+          </View>
+        </View>
+      </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('')}>
-          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Iniciar sesión</Text>
-        </TouchableOpacity>
-
-        <View style={styles.footer} />
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text>¿No tienes una cuenta? <Text style={styles.createAccount}>Crea una</Text></Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Image
+              source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
+              style={styles.modalProfilePic}
+            />
+            <TouchableOpacity style={styles.chooseButton}>
+              <Text style={styles.chooseButtonText}>Escoger</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Editar perfil</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Alias"
+              value={alias}
+              onChangeText={setAlias}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Nombre"
+              value={name}
+              onChangeText={setName}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Correo"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Confirmar contraseña"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={true}
+            />
+            <TouchableOpacity style={styles.confirmButton} onPress={handleSaveProfile}>
+              <Text style={styles.confirmButtonText}>Confirmar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 16,
     backgroundColor: '#fff',
-    position: 'relative',
   },
-  circle1: {
-    position: 'absolute',
-    top: -180,
-    left: -100,
-    width: 400,
-    height: 400,
-    borderRadius: 400,
-    backgroundColor: '#FFEBB7',
+  profileContainer: {
+    alignItems: 'center',
+    marginBottom: 32,
   },
-  circle2: {
-    position: 'absolute',
-    top: -200,
-    right: -150,
-    width: 400,
-    height: 400,
-    borderRadius: 400,
-    backgroundColor: '#FFF2CC',
-  },
-  logo: {
+  profilePic: {
     width: 100,
     height: 100,
-    marginBottom: 20,
-    resizeMode: 'contain',
+    borderRadius: 50,
+    marginBottom: 16,
   },
-  title: {
+  editButton: {
+    backgroundColor: '#FF69B4',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginBottom: 32,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  infoContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  label: {
+    color: '#777',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  infoText: {
+    color: '#000',
+    fontSize: 16,
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 4,
+  },
+  likesContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  likesTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 16,
   },
-  brand: {
-    fontSize: 40,
+  itemsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  item: {
+    alignItems: 'center',
+    width: '48%',
+  },
+  itemImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  itemText: {
+    fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
-  brandHighlight: {
-    color: '#FFA500',
+  itemSubText: {
+    color: '#777',
+    fontSize: 14,
   },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    color: '#007BFF',
-    marginBottom: 20,
-  },
-  footer: {
-    marginTop: 20,
-  },
-  createAccount: {
-    color: '#007BFF',
-  },
-  loginButton: {
-    color: '#FFFFFF',
-    backgroundColor: '#FFC600',
-    width: '100%',
-    borderRadius: 5,
-    height: 40,
+  modalContainer: {
+    flex: 1,
     justifyContent: 'center',
-    fontFamily: 'Poppins_700Bold',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalProfilePic: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 16,
+  },
+  chooseButton: {
+    backgroundColor: '#FF69B4',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginBottom: 16,
+  },
+  chooseButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  modalInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    fontSize: 16,
+  },
+  confirmButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginBottom: 16,
+  },
+  confirmButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  cancelButtonText: {
+    color: '#1E90FF',
+    fontSize: 16,
   },
 });
