@@ -1,9 +1,12 @@
 import React from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
+
 const ShoppingCart = () => {
+   
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Carrito de compras</Text>
