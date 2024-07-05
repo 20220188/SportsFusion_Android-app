@@ -47,24 +47,7 @@ export default function LoginScreen({ navigation }) {
     }
   }
 
-  const cerrarSesion = async () => {
-    try {
-      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logOut`, {
-        method: 'GET'
-      });
-
-      const data = await response.json();
-
-      if (data.status) {
-        console.log("Sesión Finalizada")
-      } else {
-        console.log('No se pudo eliminar la sesión')
-      }
-    } catch (error) {
-      console.error(error, "Error desde Catch");
-      Alert.alert('Error', 'Ocurrió un error al iniciar sesión con bryancito');
-    }
-  }
+  
 
   const handlerLogin = async () => {
     if (!usuario || !contrasenia) {

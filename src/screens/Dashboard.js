@@ -1,10 +1,38 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert, Dimensions } from 'react-native';
+import * as Constantes from '../utils/constantes';
+import { useFocusEffect } from '@react-navigation/native';
+import Constants from 'expo-constants';
+import Input from '../components/Inputs/inputs';
+import InputEmail from '../components/Inputs/InputEmail';
+import MaskedInputTelefono from '../components/Inputs/MaskedInputTelefono';
+import InputMultiline from '../components/Inputs/InputMultiline';
+import Buttons from '../components/Botones/Buttons';
 import Icon from 'react-native-vector-icons/Ionicons'; // Puedes elegir otros íconos como FontAwesome, MaterialIcons, etc.
 
 const { width } = Dimensions.get('window');
 
 export default function Dashboard({ navigation }) {
+
+  const cerrarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logOut`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        console.log("Sesión Finalizada")
+      } else {
+        console.log('No se pudo eliminar la sesión')
+      }
+    } catch (error) {
+      console.error(error, "Error desde Catch");
+      Alert.alert('Error', 'Ocurrió un error al iniciar sesión con bryancito');
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -18,6 +46,7 @@ export default function Dashboard({ navigation }) {
             source={{ uri: 'https://example.com/some-image.jpg' }} 
             style={styles.mainImage}
           />
+          
         </View>
         <View style={styles.categoryList}>
           <Text style={styles.sectionTitle}>Categorías</Text>
