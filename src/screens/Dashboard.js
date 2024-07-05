@@ -29,7 +29,7 @@ export default function Dashboard({ navigation }) {
       }
     } catch (error) {
       console.error(error, "Error desde Catch");
-      Alert.alert('Error', 'Ocurrió un error al iniciar sesión con bryancito');
+      Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
     }
   }
 
