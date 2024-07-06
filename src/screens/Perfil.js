@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Alert } from 'react-native';
+import * as Constantes from '../utils/constantes';
+import { useFocusEffect } from '@react-navigation/native';
+import Constants from 'expo-constants';
+import Input from '../components/Inputs/inputs';
+import InputEmail from '../components/Inputs/InputEmail';
+import MaskedInputTelefono from '../components/Inputs/MaskedInputTelefono';
+import InputMultiline from '../components/Inputs/InputMultiline';
+import Buttons from '../components/Botones/Buttons';
 
 export default function Perfil({ navigation }) {
+
+  const ip = Constantes.IP;
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [alias, setAlias] = useState('KevinR');
-  const [name, setName] = useState('Kevin Rodriguez');
-  const [email, setEmail] = useState('kevin@gmail.com');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [nombrePerfil, setNombrePerfil] = React.useState('');
+  const [correoPerfil, setCorreoPerfil] = React.useState('');
+  const [telefonoPerfil, setTelefonoPerfil] = React.useState('');
+  const [clavePerfil, setClavePerfil] = React.useState('');
+  const [confirmarClavePerfil, setConfirmarClavePerfil] = React.useState('')
+  const [direccionPerfil, setDireccionPerfil] = React.useState('');
+
+  // Efecto para cargar los detalles del carrito al cargar la pantalla o al enfocarse en ella
+  useFocusEffect(
+    // La función useFocusEffect ejecuta un efecto cada vez que la pantalla se enfoca.
+    React.useCallback(() => {
+      validarSesion(); // Llama a la función getDetalleCarrito.
+    }, [])
+  );
 
   const handleEditProfile = () => {
     setModalVisible(true);
@@ -95,12 +115,6 @@ export default function Perfil({ navigation }) {
               <Text style={styles.chooseButtonText}>Escoger</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Editar perfil</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Alias"
-              value={alias}
-              onChangeText={setAlias}
-            />
             <TextInput
               style={styles.modalInput}
               placeholder="Nombre"
