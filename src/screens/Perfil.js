@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Button } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Alert } from 'react-native';
 
 export default function Perfil({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [alias, setAlias] = useState('');
+  const [alias, setAlias] = useState('KevinR');
   const [name, setName] = useState('Kevin Rodriguez');
   const [email, setEmail] = useState('kevin@gmail.com');
   const [password, setPassword] = useState('');
@@ -14,8 +14,14 @@ export default function Perfil({ navigation }) {
   };
 
   const handleSaveProfile = () => {
-    setModalVisible(false);
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Las contraseñas no coinciden.");
+      return;
+    }
     // Aquí puedes agregar lógica para guardar los datos editados
+    // Por ejemplo, puedes enviar los datos a un servidor
+    setModalVisible(false);
+    Alert.alert("Perfil actualizado", "Tus datos han sido actualizados.");
   };
 
   return (
@@ -29,17 +35,23 @@ export default function Perfil({ navigation }) {
           <Text style={styles.editButtonText}>Editar Perfil</Text>
         </TouchableOpacity>
         <View style={styles.infoContainer}>
+          <Text style={styles.label}>Alias</Text>
+          <TextInput
+            style={styles.infoText}
+            value={alias}
+            editable={false}
+          />
           <Text style={styles.label}>Nombre</Text>
           <TextInput
             style={styles.infoText}
             value={name}
-            onChangeText={setName}
+            editable={false}
           />
           <Text style={styles.label}>Correo</Text>
           <TextInput
             style={styles.infoText}
             value={email}
-            onChangeText={setEmail}
+            editable={false}
           />
         </View>
       </View>
