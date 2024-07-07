@@ -1,18 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import { useFocusEffect } from '@react-navigation/native';
-import Constants from 'expo-constants';
-import Input from '../components/Inputs/inputs';
-import InputEmail from '../components/Inputs/InputEmail';
-import MaskedInputTelefono from '../components/Inputs/MaskedInputTelefono';
-import InputMultiline from '../components/Inputs/InputMultiline';
-import Buttons from '../components/Botones/Buttons';
-import Icon from 'react-native-vector-icons/Ionicons'; // Puedes elegir otros íconos como FontAwesome, MaterialIcons, etc.
+import Icon from 'react-native-vector-icons/Ionicons';
+import Categoriacard from '../components/Categoriascards/Categoriascard'; // Importar el componente
 
 const { width } = Dimensions.get('window');
 
 export default function Dashboard({ navigation }) {
+  const [categories, setCategories] = useState([]);
+  const ip = Constantes.IP; // Define tu IP aquí
+
+  useEffect(() => {
+    // Fetch categorias desde la API
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/categoria.php?action=readAll`);
+        const data = await response.json();
+        
+        if (data.dataset) {
+          setCategories(data.dataset); // Asegúrate de que el nombre del campo coincida con tu respuesta
+        } else {
+          console.error('La respuesta no contiene el campo "dataset".', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener las categorías');
+        }
+      } catch (error) {
+        console.error('Error al obtener las categorías', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener las categorías');
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const cerrarSesion = async () => {
     try {
@@ -23,15 +42,15 @@ export default function Dashboard({ navigation }) {
       const data = await response.json();
 
       if (data.status) {
-        console.log("Sesión Finalizada")
+        console.log("Sesión Finalizada");
       } else {
-        console.log('No se pudo eliminar la sesión')
+        console.log('No se pudo eliminar la sesión');
       }
     } catch (error) {
-      console.error(error, "Error desde Catch");
+      console.error('Error desde Catch', error);
       Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -46,27 +65,25 @@ export default function Dashboard({ navigation }) {
             source={{ uri: 'https://example.com/some-image.jpg' }} 
             style={styles.mainImage}
           />
-          
         </View>
         <View style={styles.categoryList}>
           <Text style={styles.sectionTitle}>Categorías</Text>
           <View style={styles.categoryItems}>
-            <View style={styles.categoryItem}>
-              <Image source={require('../img/basket.jpg')} style={styles.categoryImage} />
-              <Text style={styles.categoryText}>Baloncesto</Text>
-            </View>
-            <View style={styles.categoryItem}>
-              <Image source={{ uri: 'https://example.com/futbol.jpg' }} style={styles.categoryImage} />
-              <Text style={styles.categoryText}>Fútbol</Text>
-            </View>
-            <View style={styles.categoryItem}>
-              <Image source={{ uri: 'https://example.com/voleibol.jpg' }} style={styles.categoryImage} />
-              <Text style={styles.categoryText}>Voleibol</Text>
-            </View>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <Categoriacard 
+                  key={category.id_categoria} 
+                  ip={ip} 
+                  nombre_categoria={category.nombre_categoria} 
+                  imagen_categoria={category.imagen_categoria} 
+                />
+              ))
+            ) : (
+              <Text>No hay categorías disponibles.</Text>
+            )}
           </View>
         </View>
       </View>
-
       <View style={styles.bottomTabContainer}>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('VistaFutbol')}>
           <Icon name="home-outline" size={25} color="#000" />
@@ -83,7 +100,7 @@ export default function Dashboard({ navigation }) {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -135,20 +152,7 @@ const styles = StyleSheet.create({
   categoryItems: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  categoryItem: {
-    alignItems: 'center',
-  },
-  categoryImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-  },
-  categoryText: {
-    textAlign: 'center',
-    marginTop: 5,
-    width: 80,
-    fontFamily: 'Poppins-Regular',
+    flexWrap: 'wrap', // Para que las tarjetas se ajusten automáticamente a la pantalla
   },
   bottomTabContainer: {
     flexDirection: 'row',
