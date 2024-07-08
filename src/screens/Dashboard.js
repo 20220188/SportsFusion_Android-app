@@ -35,7 +35,7 @@ export default function Dashboard({ navigation }) {
     // Fetch productos desde la API
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAll`);
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAllMovil`);
         const data = await response.json();
         
         if (data.dataset) {
