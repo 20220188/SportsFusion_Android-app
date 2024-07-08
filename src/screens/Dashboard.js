@@ -4,7 +4,7 @@ import * as Constantes from '../utils/constantes';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
-import ProductoCard from '../components/Cards/ProductoCard'; 
+import ProductoCard from '../components/Cards/CardProducto'; 
 
 const { width } = Dimensions.get('window');
 
