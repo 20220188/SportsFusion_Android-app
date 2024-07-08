@@ -61,13 +61,7 @@ export default function Dashboard({ navigation }) {
         <View style={styles.categoriesContainer}>
           <Text style={styles.welcomeText}>Bienvenido</Text>
           <Text style={styles.sectionTitle}>Nuestras categorías</Text>
-          <Image 
-            source={{ uri: 'https://example.com/some-image.jpg' }} 
-            style={styles.mainImage}
-          />
-        </View>
-        <View style={styles.categoryList}>
-          <Text style={styles.sectionTitle}>Categorías</Text>
+          <View style={styles.categoryList}>
           <View style={styles.categoryItems}>
             {categories.length > 0 ? (
               categories.map((category) => (
@@ -82,6 +76,7 @@ export default function Dashboard({ navigation }) {
               <Text>No hay categorías disponibles.</Text>
             )}
           </View>
+        </View>
         </View>
       </View>
       <View style={styles.bottomTabContainer}>

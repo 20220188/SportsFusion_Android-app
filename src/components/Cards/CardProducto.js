@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView,
 
 const { width } = Dimensions.get('window');
 
-export default function ProductoCard({ ip, id_producto, nombre_producto, imagen }) {
+export default function ProductoCard({ ip, id_producto, nombre_producto, imagen, precio}) {
 
     return (
         <View style={styles.categoryItems}>
@@ -15,6 +15,7 @@ export default function ProductoCard({ ip, id_producto, nombre_producto, imagen 
                 />
                 <Text style={styles.categoryTexttext}>{id_producto}</Text>
                 <Text style={styles.categoryText}>{nombre_producto}</Text>
+                <Text style={styles.categoryText}>{precio}</Text>
             </View>
         </View>
     );
