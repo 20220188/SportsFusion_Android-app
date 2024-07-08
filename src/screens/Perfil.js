@@ -52,9 +52,37 @@ export default function Perfil({ navigation }) {
     }, [])
   );
 
-  const handleEditProfile = () => {
+  // Función para manejar la actualización de los datos del perfil
+  const handleEditProfile = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('Nombre', nombre);
+      formData.append('Correo', correo);
+      formData.append('Teléfono', telefono);
+      formData.append('Dirección', direccion);
+     
+
+      const url = (`${ip}/sportfusion/api/services/public/cliente.php?action=editProfile`);
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        Alert.alert('Perfil actualizado', 'Los datos del perfil han sido actualizados exitosamente');
+      formData.append('Confirmar contraseña', confirmarClave);
+        initialState.current = { nombre, correo, telefono, direccion, }; // Actualiza el estado inicial
+      } else {
+        Alert.alert('Error', 'No se pudo actualizar el perfil');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
+    }
     setModalVisible(true);
   };
+
 
   const handleSaveProfile = () => {
     if (clave !== confirmarClave) {
@@ -168,20 +196,7 @@ export default function Perfil({ navigation }) {
               value={direccion}
               onChangeText={setDireccion}
             />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Contraseña"
-              value={clave}
-              onChangeText={setClave}
-              secureTextEntry={true}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Confirmar contraseña"
-              value={confirmarClave}
-              onChangeText={setConfirmarClave}
-              secureTextEntry={true}
-            />
+        
             <TouchableOpacity style={styles.confirmButton} onPress={handleSaveProfile}>
               <Text style={styles.confirmButtonText}>Confirmar</Text>
             </TouchableOpacity>
