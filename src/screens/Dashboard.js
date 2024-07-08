@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dime
 import * as Constantes from '../utils/constantes';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Categoriacard from '../components/Categoriascards/Categoriascard'; // Importar el componente
+import Categoriacard from '../components/Cards/Categoriascard'; // Importar el componente
 
 const { width } = Dimensions.get('window');
 

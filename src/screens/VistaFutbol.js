@@ -1,60 +1,37 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
+import * as Constantes from '../utils/constantes';
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-const data = [
-  {
-    id: '1',
-    name: 'Al-Nassr Jersey',
-    price: '$65.99',
-    rating: 4.3,
-    reviews: 41,
-    image: 'url_to_al_nassr_jersey_image', // replace with actual image URL
-    trending: true,
-  },
-  {
-    id: '2',
-    name: 'Rolling Stone FC Barcelona',
-    price: '$52',
-    rating: 4.1,
-    reviews: 87,
-    image: 'url_to_rolling_stone_fc_barcelona_image', // replace with actual image URL
-    trending: false,
-  },
-  {
-    id: '3',
-    name: 'Man United Jersey',
-    price: '$59',
-    rating: 4.3,
-    reviews: 41,
-    image: 'url_to_man_united_jersey_image', // replace with actual image URL
-    trending: false,
-  },
-  {
-    id: '4',
-    name: 'PSG Jersey',
-    price: '$60',
-    rating: 4.8,
-    reviews: 692,
-    image: 'url_to_psg_jersey_image', // replace with actual image URL
-    trending: true,
-  },
-];
-
-const renderItem = ({ item }) => (
-    <View style={styles.itemContainer} >
-      {item.trending && <Text style={styles.trendingLabel}>Trending</Text>}
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemPrice}>{item.price}</Text>
-      <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>{item.rating}</Text>
-        <Text style={styles.reviewsText}>({item.reviews})</Text>
-      </View>
-    </View>
-);
+import ProductoCard from '../components/Cards/CardProducto'; // Importar el componente
 
 export default function VistaFutbol({ navigation }) {
+  const [productos, setProductos] = useState([]);
+  const ip = Constantes.IP; // Define tu IP aquí
+  
+  useEffect(() => {
+    // Fetch categorias desde la API
+    const fetchProductos = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAll`);
+        const data = await response.json();
+        
+        if (data.dataset) {
+          setCategories(data.dataset); // Asegúrate de que el nombre del campo coincida con tu respuesta
+        } else {
+          console.error('La respuesta no contiene el campo "dataset".', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener las categorías');
+        }
+      } catch (error) {
+        console.error('Error al obtener las categorías', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener las categorías');
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>

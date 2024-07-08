@@ -8,9 +8,12 @@
 //export const IP = 'http://10.10.2.108';
 
 //IP Musun
-export const IP = 'http://192.168.1.19';
+//export const IP = 'http://192.168.1.19';
 
 //export const IP = 'http://172.20.10.10';
 
 //IP laptop de Kevin
 //export const IP = 'http://192.168.0.12';
+
+//IP pc de Dom
+export const IP = 'http://192.168.0.9';
