@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dimensions, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Categoriacard from '../components/Cards/Categoriascard'; // Importar el componente
+import Categoriacard from '../components/Cards/Categoriascard'; 
+import ProductoCard from '../components/Cards/ProductoCard'; 
 
 const { width } = Dimensions.get('window');
 
 export default function Dashboard({ navigation }) {
   const [categories, setCategories] = useState([]);
-  const ip = Constantes.IP; // Define tu IP aquí
+  const [products, setProducts] = useState([]);
+  const ip = Constantes.IP;
 
   useEffect(() => {
     // Fetch categorias desde la API
@@ -19,7 +21,7 @@ export default function Dashboard({ navigation }) {
         const data = await response.json();
         
         if (data.dataset) {
-          setCategories(data.dataset); // Asegúrate de que el nombre del campo coincida con tu respuesta
+          setCategories(data.dataset);
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
           Alert.alert('Error', 'Ocurrió un error al obtener las categorías');
@@ -30,7 +32,26 @@ export default function Dashboard({ navigation }) {
       }
     };
 
+    // Fetch productos desde la API
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAll`);
+        const data = await response.json();
+        
+        if (data.dataset) {
+          setProducts(data.dataset);
+        } else {
+          console.error('La respuesta no contiene el campo "dataset".', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+        }
+      } catch (error) {
+        console.error('Error al obtener los productos', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+      }
+    };
+
     fetchCategories();
+    fetchProducts();
   }, []);
 
   const cerrarSesion = async () => {
@@ -57,12 +78,11 @@ export default function Dashboard({ navigation }) {
       <View style={styles.searchContainer}>
         <TextInput style={styles.searchText} placeholder="Buscar..." />
       </View>
-      <View style={styles.contentContainer}>
+      <ScrollView style={styles.contentContainer}>
         <View style={styles.categoriesContainer}>
           <Text style={styles.welcomeText}>Bienvenido</Text>
           <Text style={styles.sectionTitle}>Nuestras categorías</Text>
           <View style={styles.categoryList}>
-          <View style={styles.categoryItems}>
             {categories.length > 0 ? (
               categories.map((category) => (
                 <Categoriacard 
@@ -77,8 +97,24 @@ export default function Dashboard({ navigation }) {
             )}
           </View>
         </View>
+        <View style={styles.productsContainer}>
+          <Text style={styles.sectionTitle}>Nuestros productos</Text>
+          {products.length > 0 ? (
+            products.map((product) => (
+              <ProductoCard 
+                key={product.id_producto} 
+                ip={ip} 
+                id_producto={product.id_producto} 
+                nombre_producto={product.nombre_producto} 
+                imagen={product.imagen} 
+                precio={product.precio} 
+              />
+            ))
+          ) : (
+            <Text>No hay productos disponibles.</Text>
+          )}
         </View>
-      </View>
+      </ScrollView>
       <View style={styles.bottomTabContainer}>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('VistaFutbol')}>
           <Icon name="home-outline" size={25} color="#000" />
@@ -135,19 +171,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'Poppins-Regular',
   },
-  mainImage: {
-    width: '100%',
-    height: width * 0.5, // Adjust height to maintain aspect ratio
-    borderRadius: 10,
-  },
   categoryList: {
     paddingHorizontal: 20,
     paddingTop: 20,
   },
-  categoryItems: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap', // Para que las tarjetas se ajusten automáticamente a la pantalla
+  productsContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   bottomTabContainer: {
     flexDirection: 'row',
