@@ -14,18 +14,41 @@ export default function Perfil({ navigation }) {
   const ip = Constantes.IP;
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [nombrePerfil, setNombrePerfil] = React.useState('');
-  const [correoPerfil, setCorreoPerfil] = React.useState('');
-  const [telefonoPerfil, setTelefonoPerfil] = React.useState('');
-  const [clavePerfil, setClavePerfil] = React.useState('');
-  const [confirmarClavePerfil, setConfirmarClavePerfil] = React.useState('')
-  const [direccionPerfil, setDireccionPerfil] = React.useState('');
+  const [nombre, setNombre] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [clave, setClave] = useState('');
+  const [confirmarClave, setConfirmarClave] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Efecto para cargar los detalles del carrito al cargar la pantalla o al enfocarse en ella
+  // Función para obtener y mostrar el perfil del usuario
+  const validarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=readProfile`);
+      const data = await response.json();
+
+      if (data.status) {
+        setNombre(data.dataset.nombre_cliente);
+        setCorreo(data.dataset.correo_cliente);
+        setTelefono(data.dataset.telefono_cliente);
+        setDireccion(data.dataset.dirección_cliente);
+        setClave(data.dataset.clave);
+        setConfirmarClave(data.dataset.confirmarClave);
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al obtener el perfil');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Efecto para cargar los detalles del perfil al cargar la pantalla o al enfocarse en ella
   useFocusEffect(
-    // La función useFocusEffect ejecuta un efecto cada vez que la pantalla se enfoca.
     React.useCallback(() => {
-      validarSesion(); // Llama a la función getDetalleCarrito.
+      validarSesion();
     }, [])
   );
 
@@ -34,7 +57,7 @@ export default function Perfil({ navigation }) {
   };
 
   const handleSaveProfile = () => {
-    if (password !== confirmPassword) {
+    if (clave !== confirmarClave) {
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
@@ -55,22 +78,28 @@ export default function Perfil({ navigation }) {
           <Text style={styles.editButtonText}>Editar Perfil</Text>
         </TouchableOpacity>
         <View style={styles.infoContainer}>
-          <Text style={styles.label}>Alias</Text>
-          <TextInput
-            style={styles.infoText}
-            value={alias}
-            editable={false}
-          />
           <Text style={styles.label}>Nombre</Text>
           <TextInput
             style={styles.infoText}
-            value={name}
+            value={nombre}
             editable={false}
           />
           <Text style={styles.label}>Correo</Text>
           <TextInput
             style={styles.infoText}
-            value={email}
+            value={correo}
+            editable={false}
+          />
+          <Text style={styles.label}>Teléfono</Text>
+          <TextInput
+            style={styles.infoText}
+            value={telefono}
+            editable={false}
+          />
+          <Text style={styles.label}>Dirección</Text>
+          <TextInput
+            style={styles.infoText}
+            value={direccion}
             editable={false}
           />
         </View>
@@ -118,27 +147,39 @@ export default function Perfil({ navigation }) {
             <TextInput
               style={styles.modalInput}
               placeholder="Nombre"
-              value={name}
-              onChangeText={setName}
+              value={nombre}
+              onChangeText={setNombre}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Correo"
-              value={email}
-              onChangeText={setEmail}
+              value={correo}
+              onChangeText={setCorreo}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Teléfono"
+              value={telefono}
+              onChangeText={setTelefono}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Dirección"
+              value={direccion}
+              onChangeText={setDireccion}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Contraseña"
-              value={password}
-              onChangeText={setPassword}
+              value={clave}
+              onChangeText={setClave}
               secureTextEntry={true}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Confirmar contraseña"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              value={confirmarClave}
+              onChangeText={setConfirmarClave}
               secureTextEntry={true}
             />
             <TouchableOpacity style={styles.confirmButton} onPress={handleSaveProfile}>
@@ -153,7 +194,6 @@ export default function Perfil({ navigation }) {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
