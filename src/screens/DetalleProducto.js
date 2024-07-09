@@ -1,80 +1,149 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import Constants from 'expo-constants';
+import * as Constantes from '../utils/constantes';
+import ProductoCard from '../components/Cards/CardProducto'; 
 
-export default function SelectProduct({
-  ip, imagen, idProducto, nombre_producto, descripcion, precio, cantidad_disponible, accionBotonProducto
-}) {
-  const [cantidad, setCantidad] = useState('');
+export default function SelectProduct({ navigation }){
+
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [userName, setUserName] = useState('');
+  const ip = Constantes.IP;
+
+  const backProducts = () => {
+    navigation.navigate('Dashboard');
+  };
+
+  useEffect(() => {
+
+    
+
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`);
+        const data = await response.json();
+        
+        console.log('API Response for Products:', data);
+        
+        if (data.dataset) {
+          setProducts(data.dataset);
+        } else {
+          console.error('La respuesta no contiene el campo "dataset".', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+        }
+      } catch (error) {
+        console.error('Error al obtener los productos', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
-    <View style={styles.card}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}
-          style={styles.imagen}
-          resizeMode="contain"
-          onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
-        />
-      </View>
-      <Text style={styles.text}>{idProducto}</Text>
-      <Text style={styles.textTitle}>{nombre_producto}</Text>
-      <Text style={styles.text}>{descripcion}</Text>
-      <Text style={styles.textTitle}>Precio: <Text style={styles.textDentro}>${precio}</Text></Text>
-      <Text style={styles.textTitle}>Existencias: <Text style={styles.textDentro}>{cantidad_disponible} {(cantidad_disponible === 1) ? 'Unidad' : 'Unidades'}</Text></Text>
-      <TouchableOpacity style={styles.button} onPress={accionBotonProducto}>
-        <Text style={styles.buttonText}>Seleccionar Producto</Text>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={backProducts} style={styles.backButton}>
+        <Text style={styles.backButtonText}>{"<"}</Text>
       </TouchableOpacity>
-      <View style={styles.inputContainer}>
-        <Text>Ingresar Cantidad: </Text>
-        <TextInput
-          style={styles.input}
-          value={cantidad}
-          onChangeText={text => setCantidad(text)}
-          keyboardType="numeric"
-        />
-      </View>
+      
+      <View style={styles.productsContainer}>
+          {products.map((product) => (
+            <ProductoCard 
+              key={product.id_producto}
+              ip={ip}
+              id_producto={product.id_producto}
+              nombre_producto={product.nombre_producto}
+              imagen={product.imagen}
+              precio={product.precio}
+            />
+          ))}
+        </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  containerFlat: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: '#EAD8C0',
-    alignItems: 'center',
+    paddingTop: Constants.statusBarHeight,
+  },
+  backButton: {
+    position: 'absolute',
+    top: Constants.statusBarHeight + 10,
+    left: 10,
+    zIndex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  imagen: {
+    width: '100%',
+    height: 300,
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 8,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     padding: 16,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    marginTop: -25,
+    paddingBottom: 50,
   },
-  text: {
-    fontSize: 16,
-    marginBottom: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
   },
-  textTitle: {
+  subtitle: {
+    fontSize: 14,
+    color: '#999',
+    marginBottom: 10,
+  },
+  label: {
     fontSize: 16,
-    marginBottom: 8,
-    fontWeight: '700'
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 10,
+  },
+  sizes: {
+    fontSize: 16,
+    color: '#333',
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  cartButton: {
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  cartButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  description: {
+    fontSize: 14,
+    color: '#333',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginTop: 10,
   },
   input: {
     flex: 1,
@@ -84,28 +153,4 @@ const styles = StyleSheet.create({
     padding: 8,
     marginLeft: 8,
   },
-  button: {
-    backgroundColor: '#AF8260',
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  imagen: {
-    width: '65%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  imageContainer: {
-    alignItems: 'center', // Centrar imagen horizontalmente
-  },
-  textDentro: {
-    fontWeight: '400'
-  }
 });

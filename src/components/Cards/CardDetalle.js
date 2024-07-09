@@ -2,8 +2,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView 
 import { useState } from 'react';
 
 
-export default function SelectProduct({ ip, imagenProducto, idProducto, nombreProducto, descripcionProducto
-  , precioProducto, existenciasProducto, accionBotonProducto
+export default function SelectProduct({ ip, id_producto, id_detalle_producto, nombre_producto, descripcion, precio, accionBotonProducto, cantidad_disponible, id_talla, imagen
 }) {
 
   return (
@@ -11,16 +10,15 @@ export default function SelectProduct({ ip, imagenProducto, idProducto, nombrePr
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: `${ip}/coffeeshop/api/images/productos/${imagenProducto}` }}
+          source={{ uri: `${ip}/coffeeshop/api/images/productos/${imagen}` }}
           style={styles.image}
           resizeMode="contain" // Ajustar la imagen al contenedor
         />
       </View>
-      <Text style={styles.text}>{idProducto}</Text>
-      <Text style={styles.textTitle}>{nombreProducto}</Text>
-      <Text style={styles.text}>{descripcionProducto}</Text>
-      <Text style={styles.textTitle}>Precio: <Text style={styles.textDentro}>${precioProducto}</Text></Text>
-      <Text style={styles.textTitle}>Existencias: <Text style={styles.textDentro}>{existenciasProducto} {(existenciasProducto === 1) ? 'Unidad' : 'Unidades'}</Text></Text>
+      <Text style={styles.text}>{id_producto}</Text>
+      <Text style={styles.textTitle}>{nombre_producto}</Text>
+      <Text style={styles.text}>{descripcion}</Text>
+      <Text style={styles.textTitle}>Precio: <Text style={styles.textDentro}>${precio}</Text></Text>
       <TouchableOpacity style={styles.button} onPress={accionBotonProducto}>
         <Text style={styles.buttonText}>Seleccionar Producto</Text>
       </TouchableOpacity>

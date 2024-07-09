@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
@@ -14,14 +14,13 @@ export default function Dashboard({ navigation }) {
   const ip = Constantes.IP;
 
   useEffect(() => {
-    // Fetch user profile from the API
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=readProfile`);
         const data = await response.json();
 
         if (data.status) {
-          setUserName(data.dataset.nombre_cliente); // Assuming the response has a field named "nombre"
+          setUserName(data.dataset.nombre_cliente);
         } else {
           console.error('Error fetching user profile:', data);
           Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
@@ -32,7 +31,6 @@ export default function Dashboard({ navigation }) {
       }
     };
 
-    // Fetch categories from the API
     const fetchCategories = async () => {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/categoria.php?action=readAll`);
@@ -50,13 +48,12 @@ export default function Dashboard({ navigation }) {
       }
     };
 
-    // Fetch products from the API
     const fetchProducts = async () => {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAllMovil`);
         const data = await response.json();
         
-        console.log('API Response for Products:', data); // Log the entire API response
+        console.log('API Response for Products:', data);
         
         if (data.dataset) {
           setProducts(data.dataset);
@@ -94,26 +91,6 @@ export default function Dashboard({ navigation }) {
     }
   };
 
-  // Function to render each product item
-  const renderProductItem = ({ item }) => {
-    console.log('Rendering product:', item);
-    return (
-      <ProductoCard 
-        key={item.id_producto}
-        ip={ip}
-        id_producto={item.id_producto}
-        nombre_producto={item.nombre_producto}
-        imagen={item.imagen}
-        precio={item.precio}
-      />
-    );
-  };
-/*
-  const dummyProducts = [
-    { id_producto: 1, nombre_producto: 'Product 1', imagen: 'image1.jpg', precio: 10 },
-    { id_producto: 2, nombre_producto: 'Product 2', imagen: 'image2.jpg', precio: 20 },
-    { id_producto: 3, nombre_producto: 'Product 3', imagen: 'image3.jpg', precio: 30 },
-  ]; */
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -139,20 +116,20 @@ export default function Dashboard({ navigation }) {
           </ScrollView>
         </View>
         <View style={styles.productsContainer}>
-    {products.map((product) => (
-      <ProductoCard 
-        key={product.id_producto}
-        ip={ip}
-        id_producto={product.id_producto}
-        nombre_producto={product.nombre_producto}
-        imagen={product.imagen}
-        precio={product.precio}
-      />
-    ))}
-  </View>
+          {products.map((product) => (
+            <ProductoCard 
+              key={product.id_producto}
+              ip={ip}
+              id_producto={product.id_producto}
+              nombre_producto={product.nombre_producto}
+              imagen={product.imagen}
+              precio={product.precio}
+            />
+          ))}
+        </View>
       </ScrollView>
       <View style={styles.bottomTabContainer}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('VistaFutbol')}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Dashboard')}>
           <Icon name="home-outline" size={25} color="#000" />
           <Text style={styles.tabText}></Text>
         </TouchableOpacity>
