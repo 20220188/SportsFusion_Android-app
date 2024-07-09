@@ -1,113 +1,111 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
+import { useState } from 'react';
 
-const ProductDetailScreen = ({ navigation }) => {
+export default function SelectProduct({
+  ip, imagen, idProducto, nombre_producto, descripcion, precio, cantidad_disponible, accionBotonProducto
+}) {
+  const [cantidad, setCantidad] = useState('');
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={24} color="#000" />
-      </TouchableOpacity>
-      <Image
-        source={{ uri: 'url_to_man_city_jersey_image' }} // replace with actual image URL
-        style={styles.productImage}
-      />
-      <View style={styles.productDetails}>
-        <Text style={styles.productName}>Man City Jersey</Text>
-        <Text style={styles.productCategory}>Men • 2024/25</Text>
-        <Text style={styles.sectionTitle}>Tallas</Text>
-        <Text style={styles.productSizes}>XS – S – M – L – XL</Text>
-        <Text style={styles.sectionTitle}>Precio</Text>
-        <Text style={styles.productPrice}>$7.500</Text>
-        <Text style={styles.sectionTitle}>Información:</Text>
-        <Text style={styles.productDescription}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-        </Text>
-        <TouchableOpacity style={styles.cartButton}>
-          <Text style={styles.cartButtonText}>Carrito</Text>
-        </TouchableOpacity>
+    <View style={styles.card}>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: `${ip}/sportsfusion/api/images/productos/${imagen}` }}
+          style={styles.imagen}
+          resizeMode="contain"
+          onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
+        />
       </View>
-      <TouchableOpacity style={styles.favoriteButton}>
-        <Icon name="heart-outline" size={24} color="#f00" />
+      <Text style={styles.text}>{idProducto}</Text>
+      <Text style={styles.textTitle}>{nombre_producto}</Text>
+      <Text style={styles.text}>{descripcion}</Text>
+      <Text style={styles.textTitle}>Precio: <Text style={styles.textDentro}>${precio}</Text></Text>
+      <Text style={styles.textTitle}>Existencias: <Text style={styles.textDentro}>{cantidad_disponible} {(cantidad_disponible === 1) ? 'Unidad' : 'Unidades'}</Text></Text>
+      <TouchableOpacity style={styles.button} onPress={accionBotonProducto}>
+        <Text style={styles.buttonText}>Seleccionar Producto</Text>
       </TouchableOpacity>
-    </ScrollView>
+      <View style={styles.inputContainer}>
+        <Text>Ingresar Cantidad: </Text>
+        <TextInput
+          style={styles.input}
+          value={cantidad}
+          onChangeText={text => setCantidad(text)}
+          keyboardType="numeric"
+        />
+      </View>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  containerFlat: {
+    flex: 1,
+  },
   container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    paddingBottom: 20,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 1,
-  },
-  productImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-  },
-  productDetails: {
-    padding: 16,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -20,
-    backgroundColor: '#fff',
-  },
-  productName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  productCategory: {
-    fontSize: 16,
-    color: '#888',
-    marginVertical: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 16,
-  },
-  productSizes: {
-    fontSize: 16,
-    color: '#000',
-  },
-  productPrice: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-    marginVertical: 8,
-  },
-  productDescription: {
-    fontSize: 16,
-    color: '#666',
-    marginVertical: 8,
-  },
-  cartButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    flex: 1,
+    backgroundColor: '#EAD8C0',
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
   },
-  cartButtonText: {
-    fontSize: 16,
-    color: '#fff',
-  },
-  favoriteButton: {
-    position: 'absolute',
-    top: 270,
-    right: 20,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 8,
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
     elevation: 5,
   },
+  text: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  textTitle: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: '700'
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 8,
+    marginLeft: 8,
+  },
+  button: {
+    backgroundColor: '#AF8260',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  imagen: {
+    width: '65%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  imageContainer: {
+    alignItems: 'center', // Centrar imagen horizontalmente
+  },
+  textDentro: {
+    fontWeight: '400'
+  }
 });
-
-export default ProductDetailScreen;

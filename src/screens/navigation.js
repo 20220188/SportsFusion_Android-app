@@ -9,7 +9,7 @@ import CodigoRecu from './CodigoRecuperacion';
 import CambiarCont from './CambiarContra';
 import Dashboard from './Dashboard';
 import VistaFutbol from './VistaFutbol';
-import DetalleProducto from './DetalleProducto';
+import ProductDetailScreen from './DetalleProducto';
 import Perfil from './Perfil';
 import LoadingScreen from './LoadingScreen';
 import Carrito from './Carrito';
@@ -29,7 +29,7 @@ function AppNavigator() {
         <Stack.Screen name="CambiarCont" component={CambiarCont} options={{ headerShown: false }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
         <Stack.Screen name="VistaFutbol" component={VistaFutbol} options={{ headerShown: false }} />
-        <Stack.Screen name="DetalleProducto" component={DetalleProducto} options={{ headerShown: false }} />
+        <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }} />
         <Stack.Screen name="Carrito" component={Carrito} options={{ headerShown: false }} />
       </Stack.Navigator>

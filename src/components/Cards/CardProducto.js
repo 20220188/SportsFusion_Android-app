@@ -1,11 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const ProductoCard = ({ ip, id_producto, nombre_producto, imagen, precio }) => {
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate('ProductDetailScreen', { id_producto });
+  };
+
   return (
-    <View style={styles.productCard}>
+    <TouchableOpacity onPress={handlePress} style={styles.productCard}>
       <Image
         source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}
         style={styles.productImage}
@@ -14,7 +21,7 @@ const ProductoCard = ({ ip, id_producto, nombre_producto, imagen, precio }) => {
       <Text style={styles.productId}>ID: {id_producto}</Text>
       <Text style={styles.productName}>{nombre_producto}</Text>
       <Text style={styles.productPrice}>Precio: {precio}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

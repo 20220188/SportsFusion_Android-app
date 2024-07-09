@@ -108,11 +108,12 @@ export default function Dashboard({ navigation }) {
       />
     );
   };
+/*
   const dummyProducts = [
     { id_producto: 1, nombre_producto: 'Product 1', imagen: 'image1.jpg', precio: 10 },
     { id_producto: 2, nombre_producto: 'Product 2', imagen: 'image2.jpg', precio: 20 },
     { id_producto: 3, nombre_producto: 'Product 3', imagen: 'image3.jpg', precio: 30 },
-  ];
+  ]; */
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -138,7 +139,7 @@ export default function Dashboard({ navigation }) {
           </ScrollView>
         </View>
         <View style={styles.productsContainer}>
-    {dummyProducts.map((product) => (
+    {products.map((product) => (
       <ProductoCard 
         key={product.id_producto}
         ip={ip}
