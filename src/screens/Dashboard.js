@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView, FlatList } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
@@ -8,13 +8,31 @@ import ProductoCard from '../components/Cards/CardProducto';
 const { width } = Dimensions.get('window');
 
 export default function Dashboard({ navigation }) {
-
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [userName, setUserName] = useState('');
   const ip = Constantes.IP;
 
   useEffect(() => {
-    // Fetch categorias desde la API
+    // Fetch user profile from the API
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=readProfile`);
+        const data = await response.json();
+
+        if (data.status) {
+          setUserName(data.dataset.nombre_cliente); // Assuming the response has a field named "nombre"
+        } else {
+          console.error('Error fetching user profile:', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener el perfil del usuario');
+      }
+    };
+
+    // Fetch categories from the API
     const fetchCategories = async () => {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/categoria.php?action=readAll`);
@@ -32,14 +50,15 @@ export default function Dashboard({ navigation }) {
       }
     };
 
-    // Fetch productos desde la API
+    // Fetch products from the API
     const fetchProducts = async () => {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAllMovil`);
         const data = await response.json();
-        console.log(data, 'Response from API');
+        
+        console.log('API Response for Products:', data); // Log the entire API response
+        
         if (data.dataset) {
-          console.log(data.dataset, 'Dataset from API');
           setProducts(data.dataset);
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
@@ -51,6 +70,7 @@ export default function Dashboard({ navigation }) {
       }
     };
 
+    fetchUserProfile();
     fetchCategories();
     fetchProducts();
   }, []);
@@ -74,6 +94,25 @@ export default function Dashboard({ navigation }) {
     }
   };
 
+  // Function to render each product item
+  const renderProductItem = ({ item }) => {
+    console.log('Rendering product:', item);
+    return (
+      <ProductoCard 
+        key={item.id_producto}
+        ip={ip}
+        id_producto={item.id_producto}
+        nombre_producto={item.nombre_producto}
+        imagen={item.imagen}
+        precio={item.precio}
+      />
+    );
+  };
+  const dummyProducts = [
+    { id_producto: 1, nombre_producto: 'Product 1', imagen: 'image1.jpg', precio: 10 },
+    { id_producto: 2, nombre_producto: 'Product 2', imagen: 'image2.jpg', precio: 20 },
+    { id_producto: 3, nombre_producto: 'Product 3', imagen: 'image3.jpg', precio: 30 },
+  ];
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
@@ -81,40 +120,35 @@ export default function Dashboard({ navigation }) {
       </View>
       <ScrollView style={styles.contentContainer}>
         <View style={styles.categoriesContainer}>
-          <Text style={styles.welcomeText}>Bienvenido</Text>
+          <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
           <Text style={styles.sectionTitle}>Nuestras categorías</Text>
-          <View style={styles.categoryList}>
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <Categoriacard 
-                  key={category.id_categoria} 
-                  ip={ip} 
-                  nombre_categoria={category.nombre_categoria} 
-                  imagen_categoria={category.imagen_categoria} 
-                />
-              ))
-            ) : (
-              <Text>No hay categorías disponibles.</Text>
-            )}
-          </View>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScrollContainer}
+          >
+            {categories.map((category) => (
+              <Categoriacard 
+                key={category.id_categoria} 
+                ip={ip} 
+                nombre_categoria={category.nombre_categoria} 
+                imagen_categoria={category.imagen_categoria} 
+              />
+            ))}
+          </ScrollView>
         </View>
         <View style={styles.productsContainer}>
-          <Text style={styles.sectionTitle}>Nuestros productos</Text>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <ProductoCard 
-                key={product.id_producto}
-                ip={ip}
-                id_producto={product.id_producto}
-                nombre_producto={product.nombre_producto}
-                imagen={product.imagen}
-                precio={product.precio}
-              />
-            ))
-          ) : (
-            <Text>No hay productos disponibles.</Text>
-          )}
-        </View>
+    {dummyProducts.map((product) => (
+      <ProductoCard 
+        key={product.id_producto}
+        ip={ip}
+        id_producto={product.id_producto}
+        nombre_producto={product.nombre_producto}
+        imagen={product.imagen}
+        precio={product.precio}
+      />
+    ))}
+  </View>
       </ScrollView>
       <View style={styles.bottomTabContainer}>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('VistaFutbol')}>
@@ -172,10 +206,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'Poppins-Regular',
   },
-  categoryList: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
   productsContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -193,5 +223,8 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontFamily: 'Poppins-Regular',
+  },
+  categoryScrollContainer: {
+    paddingHorizontal: 10,
   },
 });

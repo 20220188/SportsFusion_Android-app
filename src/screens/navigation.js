@@ -11,6 +11,7 @@ import Dashboard from './Dashboard';
 import VistaFutbol from './VistaFutbol';
 import DetalleProducto from './DetalleProducto';
 import Perfil from './Perfil';
+import LoadingScreen from './LoadingScreen';
 import Carrito from './Carrito';
 
 
@@ -19,7 +20,8 @@ const Stack = createStackNavigator();
 function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="LoadingScreen">
+        <Stack.Screen name="LoadingScreen" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="RecuContra" component={RecuContra} options={{ headerShown: false }} />
