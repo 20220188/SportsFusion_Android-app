@@ -1,148 +1,175 @@
-import React from 'react';
-import { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { Icon, Button } from 'react-native-elements';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+// Importaciones necesarias
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, FlatList, Alert } from 'react-native';
 
+import { useFocusEffect } from '@react-navigation/native';
+// Importa la función useFocusEffect de @react-navigation/native, 
+// que permite ejecutar un efecto cada vez que la pantalla se enfoca.
 
-const ShoppingCart = () => {
-   
+import Constants from 'expo-constants';
+import * as Constantes from '../utils/constantes';
+import Buttons from '../components/Buttons/Button';
+import CarritoCard from '../components/CarritoCard/CarritoCard';
+import ModalEditarCantidad from '../components/Modales/ModalEditarCantidad';
+
+const Carrito = ({ navigation }) => {
+  // Estado para almacenar los detalles del carrito
+  const [dataDetalleCarrito, setDataDetalleCarrito] = useState([]);
+  // Estado para el id del detalle seleccionado para modificar
+  const [idDetalle, setIdDetalle] = useState(null);
+  // Estado para la cantidad del producto seleccionado en el carrito
+  const [cantidadProductoCarrito, setCantidadProductoCarrito] = useState(0);
+  // Estado para controlar la visibilidad del modal de edición de cantidad
+  const [modalVisible, setModalVisible] = useState(false);
+  // IP del servidor
+  const ip = Constantes.IP;
+
+  // Función para navegar hacia atrás a la pantalla de productos
+  const backProducts = () => {
+    navigation.navigate('Productos');
+  };
+
+  // Efecto para cargar los detalles del carrito al cargar la pantalla o al enfocarse en ella
+  useFocusEffect(
+    // La función useFocusEffect ejecuta un efecto cada vez que la pantalla se enfoca.
+    React.useCallback(() => {
+      getDetalleCarrito(); // Llama a la función getDetalleCarrito.
+    }, [])
+  );
+
+  // Función para obtener los detalles del carrito desde el servidor
+  const getDetalleCarrito = async () => {
+    try {
+      const response = await fetch(`${ip}/SportFusion/api/services/public/pedido.php?action=readDetail`, {
+        method: 'GET',
+      });
+      const data = await response.json();
+      console.log(data, "Data desde getDetalleCarrito")
+      if (data.status) {
+        setDataDetalleCarrito(data.dataset);
+      } else {
+        console.log("No hay detalles del carrito disponibles")
+        //Alert.alert('ADVERTENCIA', data.error);
+      }
+    } catch (error) {
+      console.error(error, "Error desde Catch");
+      Alert.alert('Error', 'Ocurrió un error al listar las categorias');
+    }
+  };
+
+  // Función para finalizar el pedido
+  const finalizarPedido = async () => {
+    try {
+      const response = await fetch(`${ip}/SportFusion/api/services/public/pedido.php?action=finishOrder`, {
+        method: 'GET',
+      });
+      const data = await response.json();
+      if (data.status) {
+        Alert.alert("Se finalizó la compra correctamente")
+        setDataDetalleCarrito([]); // Limpia la lista de detalles del carrito
+        navigation.navigate('TabNavigator', { screen: 'Productos' });
+      } else {
+        Alert.alert('Error', data.error);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al finalizar pedido');
+    }
+  };
+
+  // Función para manejar la modificación de un detalle del carrito
+  const handleEditarDetalle = (idDetalle, existenciasProducto) => {
+    setModalVisible(true);
+    setIdDetalle(idProducto);
+    setCantidadProductoCarrito(existenciasProducto);
+  };
+
+  // Función para renderizar cada elemento del carrito
+  const renderItem = ({ item }) => (
+    <CarritoCard
+      item={item}
+      cargarCategorias={getDetalleCarrito}
+      modalVisible={modalVisible}
+      setModalVisible={setModalVisible}
+      setCantidadProductoCarrito={setCantidadProductoCarrito}
+      cantidadProductoCarrito={cantidadProductoCarrito}
+      idDetalle={idDetalle}
+      setIdDetalle={setIdDetalle}
+      accionBotonDetalle={handleEditarDetalle}
+      getDetalleCarrito={getDetalleCarrito}
+      updateDataDetalleCarrito={setDataDetalleCarrito} // Nueva prop para actualizar la lista
+    />
+  );
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Carrito de compras</Text>
+    <View style={styles.container}>
+      {/* Componente de modal para editar cantidad */}
+      <ModalEditarCantidad
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+        idDetalle={idDetalle}
+        setIdDetalle={setIdDetalle}
+        setCantidadProductoCarrito={setCantidadProductoCarrito}
+        cantidadProductoCarrito={cantidadProductoCarrito}
+        getDetalleCarrito={getDetalleCarrito}
+      />
 
-      <View style={styles.item}>
-        <Image source={{ uri: 'https://link_a_imagen_jersey_1' }} style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.name}>Real Madrid Jersey</Text>
-          <Text style={styles.price}>$65.99</Text>
-          <View style={styles.quantityContainer}>
-            <Button icon={<Icon name="minus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-            <Text style={styles.quantity}>01</Text>
-            <Button icon={<Icon name="plus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-          </View>
-        </View>
-        <TouchableOpacity>
-          <Icon name="close" type="font-awesome" />
-        </TouchableOpacity>
-      </View>
+      {/* Título de la pantalla */}
+      <Text style={styles.title}>Carrito de Compras</Text>
 
-      {/* Repetir para cada artículo */}
-      <View style={styles.item}>
-        <Image source={{ uri: 'https://link_a_imagen_jersey_2' }} style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.name}>Real Madrid Jersey</Text>
-          <Text style={styles.price}>$55.00</Text>
-          <View style={styles.quantityContainer}>
-            <Button icon={<Icon name="minus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-            <Text style={styles.quantity}>01</Text>
-            <Button icon={<Icon name="plus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-          </View>
-        </View>
-        <TouchableOpacity>
-          <Icon name="close" type="font-awesome" />
-        </TouchableOpacity>
-      </View>
+      {/* Lista de detalles del carrito */}
+      {dataDetalleCarrito.length > 0 ? (
+        <FlatList
+          data={dataDetalleCarrito}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id_detalle.toString()}
+        />
+      ) : (
+        <Text style={styles.titleDetalle}>No hay detalles del carrito disponibles.</Text>
+      )}
 
-      {/* Repetir para cada artículo */}
-      <View style={styles.item}>
-        <Image source={{ uri: 'https://link_a_imagen_jersey_3' }} style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.name}>Celtics Jersey</Text>
-          <Text style={styles.price}>$50.00</Text>
-          <View style={styles.quantityContainer}>
-            <Button icon={<Icon name="minus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-            <Text style={styles.quantity}>01</Text>
-            <Button icon={<Icon name="plus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-          </View>
-        </View>
-        <TouchableOpacity>
-          <Icon name="close" type="font-awesome" />
-        </TouchableOpacity>
+      {/* Botones de finalizar pedido y regresar a productos */}
+      <View style={styles.containerButtons}>
+        {dataDetalleCarrito.length > 0 && (
+          <Buttons
+            textoBoton='Finalizar Pedido'
+            accionBoton={finalizarPedido}
+          />
+        )}
+        <Buttons
+          textoBoton='Regresar a productos'
+          accionBoton={backProducts}
+        />
       </View>
-
-      {/* Repetir para cada artículo */}
-      <View style={styles.item}>
-        <Image source={{ uri: 'https://link_a_imagen_jersey_4' }} style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.name}>Golden State Warriors</Text>
-          <Text style={styles.price}>$65.99</Text>
-          <View style={styles.quantityContainer}>
-            <Button icon={<Icon name="minus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-            <Text style={styles.quantity}>01</Text>
-            <Button icon={<Icon name="plus" type="font-awesome" />} buttonStyle={styles.quantityButton} />
-          </View>
-        </View>
-        <TouchableOpacity>
-          <Icon name="close" type="font-awesome" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.total}>Total: $95.00</Text>
-        <Button title="Pagar" buttonStyle={styles.payButton} />
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
+export default Carrito;
+
+// Estilos
 const styles = StyleSheet.create({
   container: {
-    padding: wp('5%'),
-  },
-  header: {
-    fontSize: hp('3%'),
-    fontWeight: 'bold',
-    marginBottom: hp('2%'),
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: hp('2%'),
-  },
-  image: {
-    width: wp('15%'),
-    height: wp('15%'),
-    marginRight: wp('5%'),
-  },
-  details: {
     flex: 1,
+    backgroundColor: '#EAD8C0',
+    paddingTop: Constants.statusBarHeight,
+    paddingHorizontal: 16,
   },
-  name: {
-    fontSize: hp('2.5%'),
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 16,
+    color: '#5C3D2E',
   },
-  price: {
-    fontSize: hp('2%'),
-    color: '#888',
-    marginBottom: hp('1%'),
+  titleDetalle: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginVertical: 16,
+    color: '#5C3D2E',
   },
-  quantityContainer: {
-    flexDirection: 'row',
+  containerButtons: {
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  quantity: {
-    marginHorizontal: wp('2%'),
-    fontSize: hp('2%'),
-  },
-  quantityButton: {
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    padding: wp('1%'),
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: hp('3%'),
-  },
-  total: {
-    fontSize: hp('2.5%'),
-    fontWeight: 'bold',
-  },
-  payButton: {
-    backgroundColor: '#000',
-  },
+  }
 });
-
-export default ShoppingCart;

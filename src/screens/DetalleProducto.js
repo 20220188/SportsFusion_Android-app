@@ -10,7 +10,7 @@ export default function SelectProduct({
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: `${ip}/sportsfusion/api/images/productos/${imagen}` }}
+          source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}
           style={styles.imagen}
           resizeMode="contain"
           onError={(e) => console.log('Error loading image:', e.nativeEvent.error)}
