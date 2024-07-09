@@ -1,3 +1,4 @@
+// dashboard.js
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
@@ -124,6 +125,7 @@ export default function Dashboard({ navigation }) {
               nombre_producto={product.nombre_producto}
               imagen={product.imagen}
               precio={product.precio}
+              onPress={() => navigation.navigate('SelectProduct', { id_producto: product.id_producto })}
             />
           ))}
         </View>

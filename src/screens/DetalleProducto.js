@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Constantes from '../utils/constantes';
-import ProductoCard from '../components/Cards/CardProducto'; 
 
-export default function SelectProduct({ navigation }){
-
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [userName, setUserName] = useState('');
+export default function DetalleProducto({ route, navigation }) {
+  const { id_producto } = route.params;
+  const [product, setProduct] = useState(null);
   const ip = Constantes.IP;
 
   const backProducts = () => {
@@ -16,48 +13,45 @@ export default function SelectProduct({ navigation }){
   };
 
   useEffect(() => {
-
-    
-
-    const fetchProducts = async () => {
+    const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`);
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica&id_producto=${id_producto}`);
         const data = await response.json();
-        
-        console.log('API Response for Products:', data);
-        
+
         if (data.dataset) {
-          setProducts(data.dataset);
+          setProduct(data.dataset[0]);
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
-          Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+          Alert.alert('Error', 'Ocurrió un error al obtener el producto');
         }
       } catch (error) {
-        console.error('Error al obtener los productos', error);
-        Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+        console.error('Error al obtener el producto', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener el producto');
       }
     };
-    fetchProducts();
-  }, []);
+
+    fetchProductDetails();
+  }, [id_producto]);
+
+  if (!product) {
+    return (
+      <View style={styles.container}>
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={backProducts} style={styles.backButton}>
         <Text style={styles.backButtonText}>{"<"}</Text>
       </TouchableOpacity>
-      
-      <View style={styles.productsContainer}>
-          {products.map((product) => (
-            <ProductoCard 
-              key={product.id_producto}
-              ip={ip}
-              id_producto={product.id_producto}
-              nombre_producto={product.nombre_producto}
-              imagen={product.imagen}
-              precio={product.precio}
-            />
-          ))}
-        </View>
+      <Image source={{ uri: `${ip}/${product.imagen}` }} style={styles.imagen} />
+      <View style={styles.card}>
+        <Text style={styles.title}>{product.nombre_producto}</Text>
+        <Text style={styles.price}>${product.precio}</Text>
+        <Text style={styles.description}>{product.descripcion}</Text>
+      </View>
     </View>
   );
 }
@@ -102,55 +96,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#999',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#666',
-    marginTop: 10,
-  },
-  sizes: {
-    fontSize: 16,
-    color: '#333',
-  },
   price: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 10,
   },
-  cartButton: {
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  cartButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   description: {
     fontSize: 14,
     color: '#333',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 8,
-    marginLeft: 8,
   },
 });

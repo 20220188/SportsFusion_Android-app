@@ -13,6 +13,7 @@ import ProductDetailScreen from './DetalleProducto';
 import Perfil from './Perfil';
 import LoadingScreen from './LoadingScreen';
 import Carrito from './Carrito';
+import SelectProduct from './SelectProduct';
 
 
 const Stack = createStackNavigator();
@@ -32,6 +33,7 @@ function AppNavigator() {
         <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }} />
         <Stack.Screen name="Carrito" component={Carrito} options={{ headerShown: false }} />
+        <Stack.Screen name="SelectProduct" component={SelectProduct} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,68 +1,39 @@
+// CardProducto.js
 import React from 'react';
-import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-const { width } = Dimensions.get('window');
-
-const ProductoCard = ({ ip, id_producto, nombre_producto, imagen, precio }) => {
-  const navigation = useNavigation();
-
-  const handlePress = () => {
-    navigation.navigate('ProductDetailScreen', { id_producto });
-  };
-
+export default function ProductoCard({ ip, id_producto, nombre_producto, imagen, precio, onPress }) {
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.productCard}>
-      <Image
-        source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}
-        style={styles.productImage}
-        resizeMode="contain"
-      />
-      <Text style={styles.productId}>ID: {id_producto}</Text>
-      <Text style={styles.productName}>{nombre_producto}</Text>
-      <Text style={styles.productPrice}>Precio: {precio}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image source={{ uri: `${ip}SportFusion/api/images/productos/${imagen}` }} style={styles.imagen} />
+      <View style={styles.info}>
+        <Text style={styles.nombre}>{nombre_producto}</Text>
+        <Text style={styles.precio}>${precio}</Text>
+      </View>
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  productCard: {
-    marginVertical: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 10,
+  card: {
     backgroundColor: '#fff',
-    width: width - 40, // Adjust width as needed
-    maxWidth: 300, // Maximum width if needed
+    borderRadius: 10,
+    marginBottom: 20,
+    overflow: 'hidden',
   },
-  productImage: {
+  imagen: {
     width: '100%',
     height: 150,
-    borderRadius: 10,
-    marginBottom: 10,
   },
-  productId: {
-    fontFamily: 'Poppins-Regular',
-    marginTop: 5,
-    fontSize: 12,
-    color: '#555',
+  info: {
+    padding: 10,
   },
-  productName: {
-    fontFamily: 'Poppins-Regular',
-    textAlign: 'center',
-    marginTop: 5,
-    fontSize: 16,
-  },
-  productPrice: {
-    fontFamily: 'Poppins-Regular',
-    textAlign: 'center',
-    marginTop: 5,
-    color: '#f08080',
+  nombre: {
     fontSize: 16,
     fontWeight: 'bold',
   },
+  precio: {
+    fontSize: 14,
+    color: '#888',
+  },
 });
-
-export default ProductoCard;
