@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Alert, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
-import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
 import ProductoCard from '../components/Cards/CardProducto'; 
@@ -13,7 +12,6 @@ export default function Dashboard({ navigation }) {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const ip = Constantes.IP;
-  const productos = products;
 
   useEffect(() => {
     // Fetch categorias desde la API
@@ -39,8 +37,9 @@ export default function Dashboard({ navigation }) {
       try {
         const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAllMovil`);
         const data = await response.json();
-        console.log(data.dataset, 'data');
+        console.log(data, 'Response from API');
         if (data.dataset) {
+          console.log(data.dataset, 'Dataset from API');
           setProducts(data.dataset);
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
@@ -101,19 +100,20 @@ export default function Dashboard({ navigation }) {
         </View>
         <View style={styles.productsContainer}>
           <Text style={styles.sectionTitle}>Nuestros productos</Text>
-
-          {
-            products ? (
-              <View>
-                <Text>{productos.nombre_producto} productos disponibles.</Text>
-              <Text>{productos.precio} productos disponibles.</Text>
-              </View>
-             
-            ) : (
-              <Text>No hay productos disponibles.</Text>
-            )
-          }
-
+          {products.length > 0 ? (
+            products.map((product) => (
+              <ProductoCard 
+                key={product.id_producto}
+                ip={ip}
+                id_producto={product.id_producto}
+                nombre_producto={product.nombre_producto}
+                imagen={product.imagen}
+                precio={product.precio}
+              />
+            ))
+          ) : (
+            <Text>No hay productos disponibles.</Text>
+          )}
         </View>
       </ScrollView>
       <View style={styles.bottomTabContainer}>

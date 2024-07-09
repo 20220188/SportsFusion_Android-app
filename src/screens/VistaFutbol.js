@@ -13,7 +13,7 @@ export default function VistaFutbol({ navigation }) {
     // Fetch categorias desde la API
     const fetchProductos = async () => {
       try {
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAll`);
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readAllMovil`);
         const data = await response.json();
         
         if (data.dataset) {
@@ -28,7 +28,7 @@ export default function VistaFutbol({ navigation }) {
       }
     };
 
-    fetchCategories();
+    fetchProductos();
   }, []);
 
   
