@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default function ProductoCard({ id_producto, nombre_producto, imagen, precio, onPress }) {
+export default function ProductoDetalle({ id_producto, nombre_producto, imagen, precio, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
       <Image source={{ uri: imagen }} style={styles.image} />

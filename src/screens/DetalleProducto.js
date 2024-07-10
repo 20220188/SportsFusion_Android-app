@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Alert, SafeAreaView, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
 
 export default function DetalleProducto({ route, navigation }) {
@@ -28,7 +28,7 @@ export default function DetalleProducto({ route, navigation }) {
         }
       } catch (error) {
         console.error('Error al obtener los detalles del producto', error);
-        Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
+        Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto1');
       } finally {
         setLoading(false);
       }
@@ -42,24 +42,31 @@ export default function DetalleProducto({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      {product ? (
-        <>
-          <Text style={styles.title}>{product.nombre_producto}</Text>
-          <Text style={styles.description}>{product.imagen}</Text>
-          <Text style={styles.price}>Precio: {product.precio}</Text>
-        </>
-      ) : (
-        <Text>No se encontraron detalles del producto.</Text>
-      )}
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {product ? (
+          <>
+            <Text style={styles.title}>{product.nombre_producto}</Text>
+            <Text style={styles.description}>{product.imagen}</Text>
+            <Text style={styles.price}>Precio: {product.precio}</Text>
+          </>
+        ) : (
+          <Text>No se encontraron detalles del producto.</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  container: {
+    flexGrow: 1,
     padding: 20,
+    paddingBottom: 80, // Add some padding to the bottom
     backgroundColor: '#fff',
   },
   title: {
