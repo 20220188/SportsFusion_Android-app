@@ -49,7 +49,7 @@ export default function DetalleProducto({ route, navigation }) {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Dashboard')}>
           <Icon name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        {product ? (
+        {product ? ( //Card para mostrar el detalle de los productos
           <>
             <Image
               source={{ uri: `${ip}/sportfusion/api/images/productos/${product.imagen}` }}
