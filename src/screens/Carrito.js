@@ -115,6 +115,7 @@ const Carrito = ({ navigation }) => {
           textStyle={styles.buttonText} // Estilo para el texto del botón
         />
       </View>
+      
     </View>
   );
 };

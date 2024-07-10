@@ -1,57 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
-import Constants from 'expo-constants';
+import { StyleSheet, View, Text, ActivityIndicator, Alert } from 'react-native';
 import * as Constantes from '../utils/constantes';
 
 export default function DetalleProducto({ route, navigation }) {
   const { id_producto } = route.params;
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const ip = Constantes.IP;
-
-  const backProducts = () => {
-    navigation.navigate('Dashboard');
-  };
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica&id_producto=${id_producto}`);
-        const data = await response.json();
-
-        if (data.dataset) {
-          setProduct(data.dataset[0]);
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          if (data.dataset) {
+            setProduct(data.dataset);
+          } else {
+            console.error('La respuesta no contiene el campo "dataset".', data);
+            Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
+          }
         } else {
-          console.error('La respuesta no contiene el campo "dataset".', data);
-          Alert.alert('Error', 'Ocurrió un error al obtener el producto');
+          const text = await response.text();
+          console.error('Expected JSON but received:', text);
+          Alert.alert('Error', 'La respuesta no es JSON');
         }
       } catch (error) {
-        console.error('Error al obtener el producto', error);
-        Alert.alert('Error', 'Ocurrió un error al obtener el producto');
+        console.error('Error al obtener los detalles del producto', error);
+        Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProductDetails();
   }, [id_producto]);
 
-  if (!product) {
-    return (
-      <View style={styles.container}>
-        <Text>Cargando...</Text>
-      </View>
-    );
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={backProducts} style={styles.backButton}>
-        <Text style={styles.backButtonText}>{"<"}</Text>
-      </TouchableOpacity>
-      <Image source={{ uri: `${ip}/${product.imagen}` }} style={styles.imagen} />
-      <View style={styles.card}>
-        <Text style={styles.title}>{product.nombre_producto}</Text>
-        <Text style={styles.price}>${product.precio}</Text>
-        <Text style={styles.description}>{product.descripcion}</Text>
-      </View>
+      {product ? (
+        <>
+          <Text style={styles.title}>{product.nombre_producto}</Text>
+          <Text style={styles.description}>{product.imagen}</Text>
+          <Text style={styles.price}>Precio: {product.precio}</Text>
+        </>
+      ) : (
+        <Text>No se encontraron detalles del producto.</Text>
+      )}
     </View>
   );
 }
@@ -59,51 +59,23 @@ export default function DetalleProducto({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EAD8C0',
-    paddingTop: Constants.statusBarHeight,
-  },
-  backButton: {
-    position: 'absolute',
-    top: Constants.statusBarHeight + 10,
-    left: 10,
-    zIndex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  imagen: {
-    width: '100%',
-    height: 300,
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding: 16,
-    marginTop: -25,
-    paddingBottom: 50,
+    padding: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  price: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
     marginBottom: 10,
+    fontFamily: 'Poppins-Regular',
   },
   description: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 16,
+    marginBottom: 10,
+    fontFamily: 'Poppins-Regular',
+  },
+  price: {
+    fontSize: 18,
+    color: '#f08080',
+    fontFamily: 'Poppins-Regular',
   },
 });

@@ -1,176 +1,45 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useState } from 'react';
+// ProductoCard.js
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-export default function SelectProduct({ ip, id_producto, id_detalle_producto, nombre_producto, descripcion, precio, accionBotonProducto, cantidad_disponible, id_talla, imagen
-}) {
-
+export default function ProductoCard({ id_producto, nombre_producto, imagen, precio, onPress }) {
   return (
-
-    <View style={styles.card}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: `${ip}/coffeeshop/api/images/productos/${imagen}` }}
-          style={styles.image}
-          resizeMode="contain" // Ajustar la imagen al contenedor
-        />
-      </View>
-      <Text style={styles.text}>{id_producto}</Text>
-      <Text style={styles.textTitle}>{nombre_producto}</Text>
-      <Text style={styles.text}>{descripcion}</Text>
-      <Text style={styles.textTitle}>Precio: <Text style={styles.textDentro}>${precio}</Text></Text>
-      <TouchableOpacity style={styles.button} onPress={accionBotonProducto}>
-        <Text style={styles.buttonText}>Seleccionar Producto</Text>
-      </TouchableOpacity>
-      <View style={styles.inputContainer}>
-        <Text>Ingresar Cantidad: </Text>
-        <TextInput
-          style={styles.input}
-          value={cantidad}
-          onChangeText={text => setCantidad(text)}
-          keyboardType="numeric"
-        />
-      </View>
-    </View>
-
+    <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
+      <Image source={{ uri: imagen }} style={styles.image} />
+      <Text style={styles.name}>{nombre_producto}</Text>
+      <Text style={styles.price}>${precio}</Text>
+    </TouchableOpacity>
   );
 }
 
-
 const styles = StyleSheet.create({
-  containerFlat: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#EAD8C0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: StatusBar.currentHeight || 0,
-  },
   card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    padding: 16,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    width: '100%',
+    marginBottom: 20,
+    borderRadius: 10,
+    backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  textTitle: {
-    fontSize: 16,
-    marginBottom: 8, fontWeight: '700'
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 8,
-    marginLeft: 8,
-  },
-  button: {
-    backgroundColor: '#AF8260',
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600'
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
+    padding: 10,
   },
   image: {
-    width: '65%',
+    width: '100%',
     height: 150,
-    borderRadius: 8,
-    marginBottom: 12,
+    borderRadius: 10,
   },
-  imageContainer: {
-    alignItems: 'center', // Centrar imagen horizontalmente
-  }, textDentro: {
-    fontWeight: '400'
-  }
+  name: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    fontFamily: 'Poppins-Regular',
+  },
+  price: {
+    fontSize: 14,
+    color: '#f08080',
+    marginTop: 5,
+    fontFamily: 'Poppins-Regular',
+  },
 });
-
-// Realizar una solicitud GET
-fetch('https://jsonplaceholder.typicode.com/posts')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json(); // Convertir la respuesta a JSON
-  })
-  .then(data => {
-    console.log(data); // Manejo de los datos obtenidos
-  })
-  .catch(error => {
-    console.error('Hubo un problema con la solicitud Fetch:', error);
-  });
-
-
-// Realizar una solicitud POST
-fetch('https://jsonplaceholder.typicode.com/posts', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    title: 'foo',
-    body: 'bar',
-    userId: 1
-  })
-})
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json(); // Convertir la respuesta a JSON
-  })
-  .then(data => {
-    console.log(data); // Manejo de los datos obtenidos
-  })
-  .catch(error => {
-    console.error('Hubo un problema con la solicitud Fetch:', error);
-  });
-
-
-
-// Realizar una solicitud GET
-axios.get('https://jsonplaceholder.typicode.com/posts')
-  .then(response => {
-    console.log(response.data); // Manejo de los datos obtenidos
-  })
-  .catch(error => {
-    console.error('Error al realizar la solicitud:', error);
-  });
-
-// Realizar una solicitud POST
-axios.post('https://jsonplaceholder.typicode.com/posts', {
-  title: 'foo',
-  body: 'bar',
-  userId: 1
-})
-  .then(response => {
-    console.log(response.data); // Manejo de los datos obtenidos
-  })
-  .catch(error => {
-    console.error('Error al realizar la solicitud:', error);
-  });

@@ -125,7 +125,7 @@ export default function Dashboard({ navigation }) {
               nombre_producto={product.nombre_producto}
               imagen={product.imagen}
               precio={product.precio}
-              onPress={() => navigation.navigate('SelectProduct', { id_producto: product.id_producto })}
+              onPress={() => navigation.navigate('DetalleProducto', { id_producto: product.id_producto })}
             />
           ))}
         </View>
