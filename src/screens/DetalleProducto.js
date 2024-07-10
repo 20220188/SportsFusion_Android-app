@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, View,Image, Text, ActivityIndicator, Alert, SafeAreaView, ScrollView } from 'react-native';
 import * as Constantes from '../utils/constantes';
 
 export default function DetalleProducto({ route, navigation }) {
@@ -12,23 +12,23 @@ export default function DetalleProducto({ route, navigation }) {
     const fetchProductDetails = async () => {
       try {
         console.log('id_producto', id_producto);
-        const formData = new FormData(); 
+        const formData = new FormData();
         formData.append('idProducto', id_producto);
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`,{
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`, {
           method: 'POST',
           body: formData,
         });
 
 
-          const data = await response.json();
-          if (data.dataset) {
-            setProduct(data.dataset);
-            console.log('data.dataset', data.dataset);
-          } else {
-            console.error('La respuesta no contiene el campo "dataset".', data);
-            Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
-          }
-        
+        const data = await response.json();
+        if (data.dataset) {
+          setProduct(data.dataset);
+          console.log('data.dataset', data.dataset);
+        } else {
+          console.error('La respuesta no contiene el campo "dataset".', data);
+          Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
+        }
+
       } catch (error) {
         console.error('Error al obtener los detalles del producto', error);
         Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto1');
@@ -50,7 +50,13 @@ export default function DetalleProducto({ route, navigation }) {
         {product ? (
           <>
             <Text style={styles.title}>{product.nombre_producto}</Text>
-            <Text style={styles.description}>{product.imagen}</Text>
+            <Image
+              source={{ uri: `${ip}/sportfusion/api/images/productos/${product.imagen}` }}
+              style={styles.image}
+              resizeMode="contain" // Ajustar la imagen al contenedor
+            />
+            <Text style={styles.description}>{product.descripcion}</Text>
+            <Text style={styles.textTitle}>Existencias: <Text style={styles.textDentro}>{product.cantidad_disponible} {(product.cantidad_disponible === 1) ? 'Unidad' : 'Unidades'}</Text></Text>
             <Text style={styles.price}>Precio: {product.precio}</Text>
           </>
         ) : (
@@ -66,6 +72,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  textTitle: {
+    fontSize: 16,
+    marginBottom: 8, fontWeight: '700'
+  }, textDentro: {
+    fontWeight: '400'
+  },
   container: {
     flexGrow: 1,
     padding: 20,
@@ -77,6 +89,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     fontFamily: 'Poppins-Regular',
+  },
+  image: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
   },
   description: {
     fontSize: 16,
