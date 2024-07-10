@@ -56,10 +56,10 @@ export default function Perfil({ navigation }) {
   const handleEditProfile = async () => {
     try {
       const formData = new FormData();
-      formData.append('Nombre', nombre);
-      formData.append('Correo', correo);
-      formData.append('Teléfono', telefono);
-      formData.append('Dirección', direccion);
+      formData.append('nombreclientePerfil', nombre);
+      formData.append('correoclientePerfil', correo);
+      formData.append('telefonoclientePerfil', telefono);
+      formData.append('direccionclientePerfil', direccion);
      
 
       const url = (`${ip}/sportfusion/api/services/public/cliente.php?action=editProfile`);
@@ -72,7 +72,6 @@ export default function Perfil({ navigation }) {
 
       if (data.status) {
         Alert.alert('Perfil actualizado', 'Los datos del perfil han sido actualizados exitosamente');
-      formData.append('Confirmar contraseña', confirmarClave);
         initialState.current = { nombre, correo, telefono, direccion, }; // Actualiza el estado inicial
       } else {
         Alert.alert('Error', 'No se pudo actualizar el perfil');
@@ -85,14 +84,11 @@ export default function Perfil({ navigation }) {
 
 
   const handleSaveProfile = () => {
-    if (clave !== confirmarClave) {
-      Alert.alert("Error", "Las contraseñas no coinciden.");
-      return;
-    }
+    
     // Aquí puedes agregar lógica para guardar los datos editados
+
     // Por ejemplo, puedes enviar los datos a un servidor
-    setModalVisible(false);
-    Alert.alert("Perfil actualizado", "Tus datos han sido actualizados.");
+    setModalVisible(true);
   };
 
   return (
@@ -102,7 +98,7 @@ export default function Perfil({ navigation }) {
           source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
           style={styles.profilePic}
         />
-        <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
+        <TouchableOpacity style={styles.editButton} onPress={handleSaveProfile}>
           <Text style={styles.editButtonText}>Editar Perfil</Text>
         </TouchableOpacity>
         <View style={styles.infoContainer}>
@@ -197,7 +193,7 @@ export default function Perfil({ navigation }) {
               onChangeText={setDireccion}
             />
         
-            <TouchableOpacity style={styles.confirmButton} onPress={handleSaveProfile}>
+            <TouchableOpacity style={styles.confirmButton} onPress={handleEditProfile}>
               <Text style={styles.confirmButtonText}>Confirmar</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
