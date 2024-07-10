@@ -5,7 +5,11 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 export default function ProductoDetalle({ id_producto, nombre_producto, imagen, precio, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
-      <Image source={{ uri: imagen }} style={styles.image} />
+      <Image
+        source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}
+        style={styles.categoryImage}
+        resizeMode="contain" // Ajustar la imagen al contenedor
+      />
       <Text style={styles.name}>{nombre_producto}</Text>
       <Text style={styles.price}>${precio}</Text>
     </TouchableOpacity>
