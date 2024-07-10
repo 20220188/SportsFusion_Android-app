@@ -11,21 +11,24 @@ export default function DetalleProducto({ route, navigation }) {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`);
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
+        console.log('id_producto', id_producto);
+        const formData = new FormData(); 
+        formData.append('idProducto', id_producto);
+        const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`,{
+          method: 'POST',
+          body: formData,
+        });
+
+
           const data = await response.json();
           if (data.dataset) {
             setProduct(data.dataset);
+            console.log('data.dataset', data.dataset);
           } else {
             console.error('La respuesta no contiene el campo "dataset".', data);
             Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
           }
-        } else {
-          const text = await response.text();
-          console.error('Expected JSON but received:', text);
-          Alert.alert('Error', 'La respuesta no es JSON');
-        }
+        
       } catch (error) {
         console.error('Error al obtener los detalles del producto', error);
         Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto1');

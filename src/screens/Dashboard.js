@@ -1,6 +1,6 @@
 // dashboard.js
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView, FlatList } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
@@ -73,6 +73,8 @@ export default function Dashboard({ navigation }) {
     fetchProducts();
   }, []);
 
+  console.log('Productos:', products);
+
   const cerrarSesion = async () => {
     try {
       const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logOut`, {
@@ -91,6 +93,17 @@ export default function Dashboard({ navigation }) {
       Alert.alert('Error', 'Ocurrió un error al iniciar sesión');
     }
   };
+
+  const renderItem = ({ item }) => (
+    <ProductoCard
+      key={item.id_detalle_producto.toString()}
+      ip={ip}
+      nombre_producto={item.nombre_producto}
+      imagen={item.imagen}
+      precio={item.precio}
+      onPress={() => navigation.navigate('DetalleProducto', { id_producto: item.id_detalle_producto })}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -117,17 +130,12 @@ export default function Dashboard({ navigation }) {
           </ScrollView>
         </View>
         <View style={styles.productsContainer}>
-          {products.map((product) => (
-            <ProductoCard 
-              key={product.id_producto}
-              ip={ip}
-              id_producto={product.id_producto}
-              nombre_producto={product.nombre_producto}
-              imagen={product.imagen}
-              precio={product.precio}
-              onPress={() => navigation.navigate('DetalleProducto', { id_producto: product.id_producto })}
-            />
-          ))}
+        <FlatList
+        data={products}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id_detalle_producto.toString()}
+        contentContainerStyle={styles.productsContainer}
+      />
         </View>
       </ScrollView>
       <View style={styles.bottomTabContainer}>
