@@ -92,20 +92,17 @@ export default function Perfil({ navigation }) {
 
       if (data.status) {
         Alert.alert('Perfil actualizado', 'Los datos del perfil han sido actualizados exitosamente');
-        
+        setModalVisible(false); // Cerrar el modal
       } else {
         Alert.alert('Error', 'No se pudo actualizar el perfil');
       }
     } catch (error) {
       console.log(error)
-      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil1');
+      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
     }
-    setModalVisible(true);
   };
 
   const handleSaveProfile = () => {
-    // Aquí puedes agregar lógica para guardar los datos editados
-    // Por ejemplo, puedes enviar los datos a un servidor
     setModalVisible(true);
   };
 
