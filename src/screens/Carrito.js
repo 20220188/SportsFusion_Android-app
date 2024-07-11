@@ -1,6 +1,6 @@
 // Importaciones necesarias
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, FlatList, Alert } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Alert, TouchableOpacity, Icon } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import * as Constantes from '../utils/constantes';
@@ -115,7 +115,6 @@ const Carrito = ({ navigation }) => {
           textStyle={styles.buttonText} // Estilo para el texto del botón
         />
       </View>
-      
     </View>
   );
 };

@@ -1,6 +1,5 @@
-// dashboard.js
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, Dimensions, FlatList, Image } from 'react-native';
 import * as Constantes from '../utils/constantes';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Categoriacard from '../components/Cards/Categoriascard'; 
@@ -11,6 +10,9 @@ const { width } = Dimensions.get('window');
 export default function Dashboard({ navigation }) {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]); // Estado para productos filtrados
+  const [selectedCategory, setSelectedCategory] = useState(null); // Estado para categoría seleccionada
+  const [searchQuery, setSearchQuery] = useState(''); // Estado para la consulta de búsqueda
   const [userName, setUserName] = useState('');
   const ip = Constantes.IP;
 
@@ -58,6 +60,7 @@ export default function Dashboard({ navigation }) {
         
         if (data.dataset) {
           setProducts(data.dataset);
+          setFilteredProducts(data.dataset); // Inicializar productos filtrados
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
           Alert.alert('Error', 'Ocurrió un error al obtener los productos');
@@ -105,39 +108,64 @@ export default function Dashboard({ navigation }) {
     />
   );
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filteredData = products.filter(product =>
+        product.nombre_producto.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProducts(filteredData);
+    } else {
+      setFilteredProducts(products);
+    }
+  };
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    const filteredData = products.filter(product => product.categoria_id === category.id_categoria);
+    setFilteredProducts(filteredData);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <TextInput style={styles.searchText} placeholder="Buscar..." />
+        <Image source={require('../img/logoSF.png')} style={styles.logo} />
+        <TextInput
+          style={styles.searchText}
+          placeholder="Buscar..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
       </View>
-      <ScrollView style={styles.contentContainer}>
-        <View style={styles.categoriesContainer}>
-          <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
-          <Text style={styles.sectionTitle}>Nuestras categorías</Text>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoryScrollContainer}
-          >
-            {categories.map((category) => (
-              <Categoriacard 
-                key={category.id_categoria} 
-                ip={ip} 
-                nombre_categoria={category.nombre_categoria} 
-                imagen_categoria={category.imagen_categoria} 
-              />
-            ))}
-          </ScrollView>
-        </View>
-        <View style={styles.productsContainer}>
-        <FlatList
-        data={products}
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <Text style={styles.welcomeText}>Bienvenido, {userName}</Text>
+            <Text style={styles.sectionTitle}>Nuestras categorías</Text>
+            <FlatList
+              horizontal
+              data={categories}
+              renderItem={({ item }) => (
+                <TouchableOpacity key={item.id_categoria} onPress={() => handleCategorySelect(item)}>
+                  <Categoriacard 
+                    ip={ip} 
+                    nombre_categoria={item.nombre_categoria} 
+                    imagen_categoria={item.imagen_categoria} 
+                  />
+                </TouchableOpacity>
+              )}
+              keyExtractor={item => item.id_categoria.toString()}
+              contentContainerStyle={styles.categoryScrollContainer}
+              showsHorizontalScrollIndicator={false}
+            />
+            <Text style={styles.sectionTitle}>Productos</Text>
+          </>
+        }
+        data={filteredProducts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id_detalle_producto.toString()}
         contentContainerStyle={styles.productsContainer}
       />
-        </View>
-      </ScrollView>
       <View style={styles.bottomTabContainer}>
         <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Dashboard')}>
           <Icon name="home-outline" size={25} color="#000" />
@@ -162,18 +190,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   searchContainer: {
-    height: 50,
-    justifyContent: 'center',
-    paddingHorizontal: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     marginTop: 50,
   },
+  logo: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+  },
   searchText: {
-    backgroundColor: '#fff',
+    flex: 1,
+    backgroundColor: '#f1f1f1',
     borderRadius: 25,
     paddingVertical: 8,
     paddingHorizontal: 20,
-    width: '100%',
-    backgroundColor: '#f1f1f1',
     fontFamily: 'Poppins-Regular',
   },
   contentContainer: {
@@ -182,17 +214,20 @@ const styles = StyleSheet.create({
   categoriesContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
+    marginLeft: 70,
   },
   welcomeText: {
     fontSize: 24,
     color: '#f08080',
     marginBottom: 10,
     fontFamily: 'Poppins-Regular',
+    marginLeft: 15,
   },
   sectionTitle: {
     fontSize: 18,
     marginBottom: 10,
     fontFamily: 'Poppins-Regular',
+    marginLeft: 15,
   },
   productsContainer: {
     paddingHorizontal: 20,

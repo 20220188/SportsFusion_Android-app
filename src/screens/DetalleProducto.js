@@ -45,10 +45,10 @@ export default function DetalleProducto({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Dashboard')}>
+        <Icon name="arrow-back" size={24} color="#000" />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Dashboard')}>
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
         {product ? ( //Card para mostrar el detalle de los productos
           <>
             <Image
@@ -97,7 +97,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    padding: 20,
+    paddingTop: 100, // Ajuste para dejar espacio suficiente debajo del panel de control
+    paddingHorizontal: 20,
     backgroundColor: '#fff',
   },
   image: {

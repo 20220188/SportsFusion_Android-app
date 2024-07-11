@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Alert } from 'react-native';
 import * as Constantes from '../utils/constantes';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import Constants from 'expo-constants';
-import Input from '../components/Inputs/inputs';
-import InputEmail from '../components/Inputs/InputEmail';
-import MaskedInputTelefono from '../components/Inputs/MaskedInputTelefono';
-import InputMultiline from '../components/Inputs/InputMultiline';
-import Buttons from '../components/Botones/Buttons';
 
 export default function Perfil({ navigation }) {
-
   const ip = Constantes.IP;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,16 +47,41 @@ export default function Perfil({ navigation }) {
     }, [])
   );
 
+  const cerrarSesion = async () => {
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logOut`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.status) {
+        console.log("Sesión Finalizada");
+        Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
+          }
+        ]);
+      } else {
+        console.log('No se pudo eliminar la sesión');
+      }
+    } catch (error) {
+      console.error('Error desde Catch', error);
+      Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
+    }
+  };
+
   // Función para manejar la actualización de los datos del perfil
   const handleEditProfile = async () => {
     try {
       const formData = new FormData();
+
       formData.append('nombreclientePerfil', nombre);
       formData.append('correoclientePerfil', correo);
       formData.append('telefonoclientePerfil', telefono);
       formData.append('direccionclientePerfil', direccion);
      
-
       const url = (`${ip}/sportfusion/api/services/public/cliente.php?action=editProfile`);
       const response = await fetch(url, {
         method: 'POST',
@@ -82,130 +102,137 @@ export default function Perfil({ navigation }) {
     setModalVisible(true);
   };
 
-
   const handleSaveProfile = () => {
-    
     // Aquí puedes agregar lógica para guardar los datos editados
-
     // Por ejemplo, puedes enviar los datos a un servidor
     setModalVisible(true);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
-          style={styles.profilePic}
-        />
-        <TouchableOpacity style={styles.editButton} onPress={handleSaveProfile}>
-          <Text style={styles.editButtonText}>Editar Perfil</Text>
-        </TouchableOpacity>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Nombre</Text>
-          <TextInput
-            style={styles.infoText}
-            value={nombre}
-            editable={false}
+    <View style={styles.mainContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.profileContainer}>
+          <Image
+            source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
+            style={styles.profilePic}
           />
-          <Text style={styles.label}>Correo</Text>
-          <TextInput
-            style={styles.infoText}
-            value={correo}
-            editable={false}
+          <Image
+            source={require('../img/logoSF.png')} // Reemplaza con la URL de la imagen de perfil
+            style={styles.profilePic}
           />
-          <Text style={styles.label}>Teléfono</Text>
-          <TextInput
-            style={styles.infoText}
-            value={telefono}
-            editable={false}
-          />
-          <Text style={styles.label}>Dirección</Text>
-          <TextInput
-            style={styles.infoText}
-            value={direccion}
-            editable={false}
-          />
-        </View>
-      </View>
-      <View style={styles.likesContainer}>
-        <Text style={styles.likesTitle}>Tus me gustas</Text>
-        <View style={styles.itemsContainer}>
-          <View style={styles.item}>
-            <Image
-              source={{ uri: 'https://example.com/bvb-jersey-url' }} // Reemplaza con la URL de la imagen de la camiseta
-              style={styles.itemImage}
-            />
-            <Text style={styles.itemText}>BVB Jersey</Text>
-            <Text style={styles.itemSubText}>Mán. 2024/25</Text>
-          </View>
-          <View style={styles.item}>
-            <Image
-              source={{ uri: 'https://example.com/chelsea-jersey-url' }} // Reemplaza con la URL de la imagen de la camiseta
-              style={styles.itemImage}
-            />
-            <Text style={styles.itemText}>Chelsea Jersey</Text>
-            <Text style={styles.itemSubText}>Mán. 2024/25</Text>
-          </View>
-        </View>
-      </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Image
-              source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
-              style={styles.modalProfilePic}
-            />
-            <TouchableOpacity style={styles.chooseButton}>
-              <Text style={styles.chooseButtonText}>Escoger</Text>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>Editar perfil</Text>
+          <View style={styles.infoContainer}>
+            <Text style={styles.label}>Nombre</Text>
             <TextInput
-              style={styles.modalInput}
-              placeholder="Nombre"
+              style={styles.infoText}
               value={nombre}
-              onChangeText={setNombre}
+              editable={false}
             />
+            <Text style={styles.label}>Correo</Text>
             <TextInput
-              style={styles.modalInput}
-              placeholder="Correo"
+              style={styles.infoText}
               value={correo}
-              onChangeText={setCorreo}
+              editable={false}
             />
+            <Text style={styles.label}>Teléfono</Text>
             <TextInput
-              style={styles.modalInput}
-              placeholder="Teléfono"
+              style={styles.infoText}
               value={telefono}
-              onChangeText={setTelefono}
+              editable={false}
             />
+            <Text style={styles.label}>Dirección</Text>
             <TextInput
-              style={styles.modalInput}
-              placeholder="Dirección"
+              style={styles.infoText}
               value={direccion}
-              onChangeText={setDireccion}
+              editable={false}
             />
-        
-            <TouchableOpacity style={styles.confirmButton} onPress={handleEditProfile}>
-              <Text style={styles.confirmButtonText}>Confirmar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity style={styles.editButton} onPress={handleSaveProfile}>
+            <Text style={styles.editButtonText}>Editar Perfil</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </ScrollView>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
+          <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+        </TouchableOpacity>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalView}>
+              <Image
+                source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
+                style={styles.modalProfilePic}
+              />
+              <TouchableOpacity style={styles.chooseButton}>
+                <Text style={styles.chooseButtonText}>Escoger</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Editar perfil</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Nombre"
+                value={nombre}
+                onChangeText={setNombre}
+              />
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Correo"
+                value={correo}
+                onChangeText={setCorreo}
+              />
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Teléfono"
+                value={telefono}
+                onChangeText={setTelefono}
+              />
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Dirección"
+                value={direccion}
+                onChangeText={setDireccion}
+              />
+          
+              <TouchableOpacity style={styles.confirmButton} onPress={handleEditProfile}>
+                <Text style={styles.confirmButtonText}>Confirmar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+
+      <View style={styles.bottomTabContainer}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Dashboard')}>
+          <Icon name="home-outline" size={25} color="#000" />
+          <Text style={styles.tabText}></Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Carrito')}>
+          <Icon name="cart-outline" size={25} color="#000" />
+          <Text style={styles.tabText}></Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Perfil')}>
+          <Icon name="person-outline" size={25} color="#000" />
+          <Text style={styles.tabText}></Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+  },
   container: {
     flexGrow: 1,
     padding: 16,
@@ -281,6 +308,19 @@ const styles = StyleSheet.create({
     color: '#777',
     fontSize: 14,
   },
+  logoutButton: {
+    backgroundColor: '#1E90FF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 120,
+    backgroundColor: 'red',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -348,5 +388,19 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#1E90FF',
     fontSize: 16,
+  },
+  bottomTabContainer: {
+    flexDirection: 'row',
+    height: 70,
+    backgroundColor: '#D9D9D9',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+  tabItem: {
+    alignItems: 'center',
+  },
+  tabText: {
+    fontFamily: 'Poppins-Regular',
   },
 });

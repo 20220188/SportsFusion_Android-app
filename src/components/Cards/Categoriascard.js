@@ -70,9 +70,12 @@ const styles = StyleSheet.create({
     categoryItems: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginRight: 20,
+        
     },
     categoryItem: {
         alignItems: 'center',
+        
     },
     categoryImage: {
         width: 80,

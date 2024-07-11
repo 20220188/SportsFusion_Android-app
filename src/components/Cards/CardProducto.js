@@ -3,7 +3,6 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function ProductoCard({ ip, id_detalle_producto, nombre_producto, imagen, precio, onPress }) {
-  console.log("id_detalle_producto", id_detalle_producto);
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(id_detalle_producto)}>
       <Image 
@@ -34,7 +33,10 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 150,
+    width: 150,
     borderRadius: 10,
+    resizeMode: 'stretch',
+    marginLeft: 85
   },
   name: {
     fontSize: 16,
