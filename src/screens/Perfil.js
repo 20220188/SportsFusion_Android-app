@@ -92,12 +92,13 @@ export default function Perfil({ navigation }) {
 
       if (data.status) {
         Alert.alert('Perfil actualizado', 'Los datos del perfil han sido actualizados exitosamente');
-        initialState.current = { nombre, correo, telefono, direccion, }; // Actualiza el estado inicial
+        
       } else {
         Alert.alert('Error', 'No se pudo actualizar el perfil');
       }
     } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
+      console.log(error)
+      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil1');
     }
     setModalVisible(true);
   };
