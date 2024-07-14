@@ -51,7 +51,7 @@ const Carrito = ({ navigation }) => {
       if (data.status) {
         Alert.alert("Se finalizó la compra correctamente");
         setDataDetalleCarrito([]);
-        navigation.navigate('TabNavigator', { screen: 'Dashboard' });
+        navigation.navigate({ screen: 'Dashboard' });
       } else {
         Alert.alert('Error', data.error);
       }
