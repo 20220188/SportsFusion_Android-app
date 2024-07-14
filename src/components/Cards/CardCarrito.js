@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, StyleSheet, FlatList, Alert } from 'react-native';
 import Constants from 'expo-constants';
-import * as Constantes from '../../utils/constantes'
+import * as Constantes from '../../utils/constantes';
 
 const CarritoCard = ({item, cargarCategorias, 
   modalVisible,
@@ -9,33 +9,11 @@ const CarritoCard = ({item, cargarCategorias,
   cantidadProductoCarrito,
   setCantidadProductoCarrito, 
   accionBotonDetalle,
+  precio_pedido,
   idDetalle,
   setIdDetalle, getDetalleCarrito, updateDataDetalleCarrito}) => {
 
     const ip = Constantes.IP;
-    //asignar el valor a cantidadproducto carrito que viene 
-  
-/*
-    const handleDeleteDetalleCarrito = async (idDetalle) => {
-      try {
-        const formData = new FormData();
-        formData.append('idDetalle', idDetalle);
-        const response = await fetch(`${ip}/coffeeshop/api/services/public/pedido.php?action=deleteDetail`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await response.json();
-        if (data.status) {
-          Alert.alert('Datos eliminados correctamente del carrito');
-          // Llamar a la función de actualización para actualizar la lista
-          updateDataDetalleCarrito(prevData => prevData.filter(item => item.id_detalle !== idDetalle));
-        } else {
-          Alert.alert('Error al eliminar del carrito', data.error);
-        }
-      } catch (error) {
-        Alert.alert("Error al eliminar del carrito")
-      }
-    };*/
     
     const handleDeleteDetalleCarrito = async (idDetalle) => {
       try {
@@ -51,17 +29,24 @@ const CarritoCard = ({item, cargarCategorias,
             {
               text: 'Eliminar',
               onPress: async () => {
+                console.log('Eliminando detalle del carrito con ID:', idDetalle);
                 const formData = new FormData();
                 formData.append('idDetalle', idDetalle);
-                const response = await fetch(`${ip}/SportFusion/api/services/public/pedido.php?action=deleteDetail`, {
+                console.log('FormData:', formData);
+                const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=deleteDetail`, {
                   method: 'POST',
                   body: formData
                 });
                 const data = await response.json();
+                console.log('Response data:', data);
                 if (data.status) {
                   Alert.alert('Datos eliminados correctamente del carrito');
                   // Llamar a la función de actualización para actualizar la lista
-                  updateDataDetalleCarrito(prevData => prevData.filter(item => item.id_detalle !== idDetalle));
+                  updateDataDetalleCarrito(prevData => {
+                    const updatedData = prevData.filter(item => item.id_detalle !== idDetalle);
+                    console.log('Updated data:', updatedData);
+                    return updatedData;
+                  });
                 } else {
                   Alert.alert('Error al eliminar del carrito', data.error);
                 }
@@ -70,32 +55,26 @@ const CarritoCard = ({item, cargarCategorias,
           ]
         );
       } catch (error) {
-        Alert.alert("Error al eliminar del carrito")
+        console.error('Error al eliminar del carrito:', error);
+        Alert.alert("Error al eliminar del carrito");
       }
     };
      
-
   return (
     <View style={styles.itemContainer}>
-
-    <Text style={styles.itemText}>ID: {item.id_detalle}</Text>
-    <Text style={styles.itemText}>Nombre: {item.nombre_producto}</Text>
-    <Text style={styles.itemText}>Precio: ${item.precio_producto}</Text>
-    <Text style={styles.itemText}>SubTotal: ${(parseFloat(item.cantidad_producto)*parseFloat(item.precio_producto)).toFixed(2)}</Text>
-
-    <TouchableOpacity style={styles.modifyButton}
-    onPress={()=>accionBotonDetalle(item.id_detalle, item.cantidad_producto)}
-    >
-      <Text style={styles.buttonText}>Modificar Cantidad</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.deleteButton}
-    onLongPress={()=>handleDeleteDetalleCarrito(item.id_detalle)}
-    >
-      <Text style={styles.buttonText}>Eliminar del carrito</Text>
-    </TouchableOpacity>
-  </View>
-
+      <Text style={styles.itemText}>Nombre: {item.nombre_producto}</Text>
+      <Text style={styles.itemText}>Precio: ${item.precio_pedido}</Text>
+      <TouchableOpacity style={styles.modifyButton}
+        onPress={()=>accionBotonDetalle(item.id_detalle, item.cantidad_producto)}
+      >
+        <Text style={styles.buttonText}>Modificar Cantidad</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.deleteButton}
+        onLongPress={()=>handleDeleteDetalleCarrito(item.id_detalle)}
+      >
+        <Text style={styles.buttonText}>Eliminar del carrito</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -133,20 +112,20 @@ const styles = StyleSheet.create({
   },
   modifyButton: {
     borderWidth: 1,
-    borderColor: '#8F6B58',
+    borderColor: '#007bff',
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#8F6B58', // Light brown color for modify button
+    backgroundColor: '#007bff', // Light brown color for modify button
     marginVertical: 4,
   },
   deleteButton: {
     borderWidth: 1,
-    borderColor: '#D2691E',
+    borderColor: 'red',
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#D2691E', // Darker orange color for delete button
+    backgroundColor: 'red', // Darker orange color for delete button
     marginVertical: 4,
   },
   buttonText: {

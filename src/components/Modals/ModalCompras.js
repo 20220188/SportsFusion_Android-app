@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
-import Buttons from '../Botones/Buttons';
-import * as Constantes from '../../utils/constantes'
+import { View, Text, Modal, StyleSheet, TextInput, Alert, TouchableOpacity } from 'react-native';
+import * as Constantes from '../../utils/constantes';
 
-const ModalCompra = ({ visible, cerrarModal, nombreProductoModal, idProductoModal, cantidad, setCantidad }) => {
+const ModalCompra = ({ visible, cerrarModal, nombreProductoModal, id_producto, cantidad, setCantidad }) => {
 
     const ip = Constantes.IP;
 
     const handleCreateDetail = async () => {
-
+        
         try {
             if ((cantidad < 0)) {
-                Alert.alert("Debes llenar todos los campos")
-                return
-            }
-            else {
+                Alert.alert("Debes llenar todos los campos");
+                return;
+            } else {
                 const formData = new FormData();
-                formData.append('idProducto', idProductoModal);
+                formData.append('idProducto', id_producto);
                 formData.append('cantidadProducto', cantidad);
 
-                const response = await fetch(`${ip}/SportFusion/api/services/public/pedido.php?action=createDetail`, {
+                const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=createDetail`, {
                     method: 'POST',
                     body: formData
                 });
@@ -33,18 +31,14 @@ const ModalCompra = ({ visible, cerrarModal, nombreProductoModal, idProductoModa
                     Alert.alert('Error', data.error);
                 }
             }
-
         } catch (error) {
             Alert.alert('Ocurrió un error al crear detalle');
         }
     };
 
     const handleCancelCarrito = () => {
-        // Lógica para agregar al carrito con la cantidad ingresada
-        cerrarModal(false)
+        cerrarModal(false);
     };
-    //logica para la compra del producto - agregar el producto al carrito
-
 
     return (
         <Modal
@@ -66,12 +60,18 @@ const ModalCompra = ({ visible, cerrarModal, nombreProductoModal, idProductoModa
                         keyboardType="numeric"
                         placeholder="Ingrese la cantidad"
                     />
-                    <Buttons
-                        textoBoton='Agregar al carrito'
-                        accionBoton={() => handleCreateDetail()} />
-                    <Buttons
-                        textoBoton='Cancelar'
-                        accionBoton={() => handleCancelCarrito()} />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleCreateDetail}
+                    >
+                        <Text style={styles.buttonText}>Agregar al carrito</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={handleCancelCarrito}
+                    >
+                        <Text style={styles.buttonText}>Cancelar</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </Modal>
@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Black semi-transparent background
     },
     modalView: {
-        backgroundColor: 'white',
+        backgroundColor: '#ffffff', // White background
         borderRadius: 8,
         padding: 20,
         alignItems: 'center',
@@ -98,15 +98,18 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
+        borderColor: '#000000', // Black border color
+        borderWidth: 1,
     },
     modalText: {
         marginBottom: 10,
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#000000', // Black text color
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#000000',
         borderRadius: 5,
         padding: 10,
         marginBottom: 20,
@@ -114,14 +117,15 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#007bff', // Blue background
         borderRadius: 5,
         paddingVertical: 10,
         paddingHorizontal: 20,
         alignItems: 'center',
+        marginVertical: 5,
     },
     buttonText: {
-        color: '#ffffff',
+        color: '#ffffff', // White text color
         fontSize: 16,
         fontWeight: 'bold',
     },

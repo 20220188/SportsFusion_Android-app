@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Text, ActivityIndicator, Alert, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Constantes from '../utils/constantes';
+import ModalCompra from '../components/Modals/ModalCompras'; // Asegúrate de que la ruta es correcta
 
 export default function DetalleProducto({ route, navigation }) {
   const { id_producto } = route.params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nombreProductoModal, setNombreProductoModal] = useState('');
+  const [idProductoModal, setIdProductoModal] = useState(null);
+  const [cantidad, setCantidad] = useState(1); // Por defecto 1
   const ip = Constantes.IP;
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        console.log('id_producto', id_producto);
+        console.log('idProducto:', id_producto);
         const formData = new FormData();
         formData.append('idProducto', id_producto);
         const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`, {
@@ -21,9 +26,10 @@ export default function DetalleProducto({ route, navigation }) {
         });
 
         const data = await response.json();
+        console.log('Response data:', data);
         if (data.dataset) {
           setProduct(data.dataset);
-          console.log('data.dataset', data.dataset);
+          console.log('data.dataset:', data.dataset);
         } else {
           console.error('La respuesta no contiene el campo "dataset".', data);
           Alert.alert('Error', 'Ocurrió un error al obtener los detalles del producto');
@@ -38,6 +44,14 @@ export default function DetalleProducto({ route, navigation }) {
 
     fetchProductDetails();
   }, [id_producto]);
+
+  const handleOpenModal = () => {
+    if (product) {
+      setNombreProductoModal(product.nombre_producto);
+      setIdProductoModal(product.id_producto);
+      setModalVisible(true);
+    }
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -61,9 +75,9 @@ export default function DetalleProducto({ route, navigation }) {
               <Text style={styles.subtitle}>{product.descripcion}</Text>
               <Text style={styles.textTitle}>Existencias: <Text style={styles.textDentro}>{product.cantidad_disponible} {(product.cantidad_disponible === 1) ? 'Unidad' : 'Unidades'}</Text></Text>
               <View style={styles.priceContainer}>
-                <Text style={styles.priceTitle}>Precio</Text>
+                <Text style={styles.priceTitle}>$</Text>
                 <Text style={styles.price}>{product.precio}</Text>
-                <TouchableOpacity style={styles.cartButton}>
+                <TouchableOpacity style={styles.cartButton} onPress={handleOpenModal}>
                   <Text style={styles.cartButtonText}>Carrito</Text>
                   <Icon name="cart" size={16} color="#fff" />
                 </TouchableOpacity>
@@ -74,6 +88,14 @@ export default function DetalleProducto({ route, navigation }) {
           <Text>No se encontraron detalles del producto.</Text>
         )}
       </ScrollView>
+      <ModalCompra
+        visible={modalVisible}
+        cerrarModal={setModalVisible}
+        nombreProductoModal={nombreProductoModal}
+        idProductoModal={idProductoModal}
+        cantidad={cantidad}
+        setCantidad={setCantidad}
+      />
     </SafeAreaView>
   );
 }
