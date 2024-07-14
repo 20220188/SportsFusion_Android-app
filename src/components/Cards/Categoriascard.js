@@ -14,7 +14,6 @@ export default function Categoriacard({ ip, id_categoria, nombre_categoria, imag
                     resizeMode="contain" // Ajustar la imagen al contenedor
                 />
                 <Text style={styles.categoryTexttext}>{id_categoria}</Text>
-                <Text style={styles.categoryText}>{nombre_categoria}</Text>
             </View>
         </View>
     );

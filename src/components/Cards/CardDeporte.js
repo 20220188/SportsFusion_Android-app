@@ -14,7 +14,6 @@ export default function CardDeporte({ ip, id_deporte, nombre_deporte, imagen_dep
                     resizeMode="contain" // Ajustar la imagen al contenedor
                 />
                 <Text style={styles.categoryTexttext}>{id_deporte}</Text>
-                <Text style={styles.categoryText}>{nombre_deporte}</Text>
             </View>
         </View>
     );
