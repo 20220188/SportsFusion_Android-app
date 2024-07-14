@@ -2,9 +2,9 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default function ProductoCard({ ip, id_detalle_producto, nombre_producto, imagen, precio, onPress }) {
+export default function ProductoCard({ ip, id_detalle_producto, id_producto, nombre_producto, imagen, precio, onPress }) {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(id_detalle_producto)}>
+    <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
       <Image 
         source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }} 
         style={styles.image} 
