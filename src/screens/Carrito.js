@@ -40,6 +40,7 @@ const Carrito = ({ navigation }) => {
       Alert.alert('Error', 'Ocurrió un error al listar las categorias');
     }
   };
+  
 
   const finalizarPedido = async () => {
     try {
@@ -59,6 +60,23 @@ const Carrito = ({ navigation }) => {
     }
   };
 
+  const updateDetalleCarrito = async (idDetalle, nuevaCantidad) => {
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=updateDetail`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      if (data.status) {
+        Alert.alert('Actualización', 'El detalle se actualizó correctamente');
+        getDetalleCarrito(); // Actualiza la lista de detalles del carrito después de la actualización
+      } else {
+        Alert.alert('Error', 'Ocurrió un error al actualizar el detalle');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error al actualizar el detalle');
+    }
+  };
+
   const handleEditarDetalle = (idDetalle, existenciasProducto) => {
     setModalVisible(true);
     setIdDetalle(idDetalle);
@@ -68,6 +86,7 @@ const Carrito = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <CarritoCard
       item={item}
+      imagen={item.imagen}
       cargarCategorias={getDetalleCarrito}
       modalVisible={modalVisible}
       setModalVisible={setModalVisible}
@@ -83,8 +102,6 @@ const Carrito = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      
-
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Dashboard')}>
         <Icon name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
