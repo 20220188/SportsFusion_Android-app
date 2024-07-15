@@ -20,6 +20,7 @@ export default function DetalleProducto({ route, navigation }) {
         console.log('idProducto:', id_producto);
         const formData = new FormData();
         formData.append('idProducto', id_producto);
+        formData.append('cantidadProducto', cantidad);
         const response = await fetch(`${ip}/sportfusion/api/services/public/producto.php?action=readOnePublica`, {
           method: 'POST',
           body: formData,
@@ -93,6 +94,7 @@ export default function DetalleProducto({ route, navigation }) {
         cerrarModal={setModalVisible}
         nombreProductoModal={nombreProductoModal}
         idProductoModal={idProductoModal}
+        id_producto={id_producto}
         cantidad={cantidad}
         setCantidad={setCantidad}
       />

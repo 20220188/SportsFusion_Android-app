@@ -9,13 +9,14 @@ const ModalCompra = ({ visible, cerrarModal, nombreProductoModal, id_producto, c
     const handleCreateDetail = async () => {
         
         try {
-            if ((cantidad < 0)) {
+            if ((cantidad <= 0)) {
                 Alert.alert("Debes llenar todos los campos");
                 return;
             } else {
                 const formData = new FormData();
                 formData.append('idProducto', id_producto);
                 formData.append('cantidadProducto', cantidad);
+                console.log("formData", formData);
 
                 const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=createDetail`, {
                     method: 'POST',
