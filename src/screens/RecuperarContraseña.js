@@ -1,7 +1,10 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import emailjs from 'emailjs-com';
+import * as Constantes from '../utils/constantes';
 
 export default function RecuperarContraseñas({ navigation }) {
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -14,9 +17,15 @@ export default function RecuperarContraseñas({ navigation }) {
         <Text style={styles.title}>Recuperación de contraseña</Text>
         <Text style={styles.brand}>Sports<Text style={styles.brandHighlight}>Fusion</Text></Text>
         
-        <TextInput style={styles.input} placeholder="Correo electrónico" keyboardType="email-address" />
+        <TextInput
+          style={styles.input}
+          placeholder="Correo electrónico"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('CodigoRecu')}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleRecovery} disabled={loading}>
           <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Enviar</Text>
         </TouchableOpacity>
 
