@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import Constants from 'expo-constants';
 
+import HistorialCard from '../components/Cards/CardHistorial';
+
 export default function Perfil({ navigation }) {
   const ip = Constantes.IP;
 
@@ -96,6 +98,20 @@ export default function Perfil({ navigation }) {
       console.log(error)
       Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
     }
+
+    const fetchHistorial = async () => {
+      try {
+        const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readHistorial`);
+        const data = await response.json();
+        if (data.dataset) {
+          setHistorial(data.dataset);
+          setFilteredProducts(data.dataset);
+        } else {
+          Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Ocurrió un error al obtener los productos');
+      }
   };
 
   const handleSaveProfile = () => {
