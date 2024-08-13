@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import emailjs from 'emailjs-com';
 import * as Constantes from '../utils/constantes';
 
 export default function RecuperarContraseñas({ navigation }) {
