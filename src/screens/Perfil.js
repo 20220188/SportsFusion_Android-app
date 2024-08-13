@@ -12,8 +12,6 @@ export default function Perfil({ navigation }) {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [clave, setClave] = useState('');
-  const [confirmarClave, setConfirmarClave] = useState('');
   const [direccion, setDireccion] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +26,6 @@ export default function Perfil({ navigation }) {
         setCorreo(data.dataset.correo_cliente);
         setTelefono(data.dataset.telefono_cliente);
         setDireccion(data.dataset.dirección_cliente);
-        setClave(data.dataset.clave);
-        setConfirmarClave(data.dataset.confirmarClave);
       } else {
         Alert.alert('Error', data.error);
       }
@@ -118,8 +114,14 @@ export default function Perfil({ navigation }) {
             source={require('../img/logoSF.png')} // Reemplaza con la URL de la imagen de perfil
             style={styles.profilePic}
           />
+          
           <View style={styles.infoContainer}>
-            <Text style={styles.label}>Nombre</Text>
+            <View style={styles.nameAndEditContainer}>
+              <Text style={styles.label}>Nombre</Text>
+              <TouchableOpacity style={styles.editButton} onPress={handleSaveProfile}>
+                <Icon name="pencil-outline" size={35} color="#FF69B4" />
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={styles.infoText}
               value={nombre}
@@ -144,9 +146,6 @@ export default function Perfil({ navigation }) {
               editable={false}
             />
           </View>
-          <TouchableOpacity style={styles.editButton} onPress={handleSaveProfile}>
-            <Text style={styles.editButtonText}>Editar Perfil</Text>
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
@@ -246,17 +245,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 16,
   },
-  editButton: {
-    backgroundColor: '#FF69B4',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    marginBottom: 32,
-  },
-  editButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
   infoContainer: {
     width: '100%',
     paddingHorizontal: 16,
@@ -274,37 +262,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     paddingVertical: 4,
   },
-  likesContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  likesTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  itemsContainer: {
+  nameAndEditContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  item: {
     alignItems: 'center',
-    width: '48%',
+    marginBottom: 16,
   },
-  itemImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  itemText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  itemSubText: {
-    color: '#777',
-    fontSize: 14,
+  editButton: {
+    marginLeft: 8,
   },
   logoutButton: {
     paddingVertical: 10,
@@ -326,35 +291,27 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
     padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   modalProfilePic: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 16,
   },
   chooseButton: {
-    backgroundColor: '#FF69B4',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
     marginBottom: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#FF69B4',
   },
   chooseButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
   },
   modalTitle: {
     fontSize: 20,
@@ -363,19 +320,21 @@ const styles = StyleSheet.create({
   },
   modalInput: {
     width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
     marginBottom: 16,
     fontSize: 16,
   },
   confirmButton: {
-    backgroundColor: '#1E90FF',
+    width: '100%',
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     borderRadius: 20,
+    backgroundColor: '#FF69B4',
+    alignItems: 'center',
     marginBottom: 16,
   },
   confirmButtonText: {
@@ -383,21 +342,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelButtonText: {
-    color: '#1E90FF',
+    color: '#FF69B4',
     fontSize: 16,
   },
   bottomTabContainer: {
     flexDirection: 'row',
-    height: 70,
-    backgroundColor: '#D9D9D9',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    marginBottom: 0,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   },
   tabItem: {
     alignItems: 'center',
   },
   tabText: {
-    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: '#000',
   },
 });
