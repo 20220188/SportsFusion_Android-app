@@ -22,7 +22,7 @@
 
 
 //IP pc de Dom
-export const IP = 'http://10.10.2.139';
+export const IP = 'http://10.10.2.137';
 
 
 //IP pc de Rodri

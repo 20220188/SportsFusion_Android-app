@@ -2,12 +2,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const fetchProducts = async () => {
+const fetchHistorial = async () => {
     try {
       const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readHistorial`);
       const data = await response.json();
       if (data.dataset) {
-        setProducts(data.dataset);
+        setPedido(data.dataset);
         setFilteredProducts(data.dataset);
       } else {
         Alert.alert('Error', 'Ocurrió un error al obtener las compras');

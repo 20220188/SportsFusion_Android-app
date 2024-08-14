@@ -14,6 +14,7 @@ import Perfil from './Perfil';
 import LoadingScreen from './LoadingScreen';
 import Carrito from './Carrito';
 import DetalleProducto from './DetalleProducto';
+import HistorialCompra from './HistorialCompra';
 
 
 const Stack = createStackNavigator();
@@ -34,6 +35,7 @@ function AppNavigator() {
         <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }} />
         <Stack.Screen name="Carrito" component={Carrito} options={{ headerShown: false }} />
         <Stack.Screen name="DetalleProducto" component={DetalleProducto} options={{ headerShown: false }} />
+        <Stack.Screen name="HistorialCompra" component={HistorialCompra} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
