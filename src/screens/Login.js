@@ -57,8 +57,8 @@ export default function LoginScreen({ navigation }) {
 
     try {
       const formData = new FormData();
-      formData.append('correo', usuario);
-      formData.append('clave', contrasenia);
+      formData.append('correoCliente', usuario);
+      formData.append('claveCliente', contrasenia);
 
       const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logIn`, {
         method: 'POST',

@@ -28,7 +28,7 @@ function AppNavigator() {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="RecuContra" component={RecuContra} options={{ headerShown: false }} />
         <Stack.Screen name="CodigoRecu" component={CodigoRecu} options={{ headerShown: false }} />
-        <Stack.Screen name="CambiarCont" component={CambiarCont} options={{ headerShown: false }} />
+        <Stack.Screen name="CambiarContra" component={CambiarCont} options={{ headerShown: false }} />
         <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
         <Stack.Screen name="VistaFutbol" component={VistaFutbol} options={{ headerShown: false }} />
         <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} options={{ headerShown: false }} />

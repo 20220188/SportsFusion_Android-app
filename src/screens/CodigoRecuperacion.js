@@ -1,7 +1,49 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import * as Constantes from '../utils/constantes';
 
-export default function CodigoRecuperacion({ navigation }) {
+export default function CodigoRecuperacion({ route, navigation }) {
+
+  const ip = Constantes.IP;
+   // Estado para almacenar el PIN ingresado por el usuario
+   const [pin, setPin] = useState('');
+   // Extraer el email de los parámetros de la ruta
+   const { email } = route.params;
+ 
+   // Función para manejar la verificación del PIN
+   const handleVerifyPin = async () => {
+     try {
+       // Verificar que el PIN no esté vacío
+       if (!pin.trim()) {
+         Alert.alert('Error', 'Por favor, ingresa el PIN.');
+         return;
+       }
+ 
+       // Realizar una solicitud POST al servidor para verificar el PIN
+       const response =  await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=verificarPin`, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/x-www-form-urlencoded',
+         },
+         body: `correo=${email}&pin=${pin}`,
+       });
+ 
+       const data = await response.json();
+ 
+       if (data.status === 1) {
+         // Si el PIN es válido, mostrar una alerta de éxito y navegar a la pantalla de nueva contraseña
+         Alert.alert('Éxito', 'PIN verificado correctamente', [
+           { text: 'OK', onPress: () => navigation.navigate('CambiarContra', { id_cliente: data.id_cliente, email: email }) }
+         ]);
+       } else {
+         // Si el PIN no es válido, mostrar una alerta
+         Alert.alert('Error', data.error || 'PIN inválido o expirado');
+       }
+     } catch (error) {
+       // Mostrar una alerta en caso de error de conexión
+       Alert.alert('Error', 'Ocurrió un error en la conexión');
+     }
+   };
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -14,10 +56,17 @@ export default function CodigoRecuperacion({ navigation }) {
         <Text style={styles.title}>Código de recuperación</Text>
         <Text style={styles.brand}>Sports<Text style={styles.brandHighlight}>Fusion</Text></Text>
         
-        <TextInput style={styles.input} placeholder="Código" keyboardType="number-pad" />
+        
+        <TextInput
+        style={styles.input}
+        placeholder="Ingrese el PIN"
+        onChangeText={text => setPin(text)}
+        value={pin}
+        keyboardType="numeric"
+      />
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('CambiarCont')}>
-          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Enviar</Text>
+        <TouchableOpacity style={styles.button} onPress={handleVerifyPin}>
+          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Verificar PIN</Text>
         </TouchableOpacity>
 
         <View style={styles.footer} />

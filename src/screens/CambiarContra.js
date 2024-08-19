@@ -1,7 +1,57 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import * as Constantes from '../utils/constantes';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function CambiarContra({ navigation }) {
+export default function CambiarContra({ route, navigation }) {
+  const ip = Constantes.IP;
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { id_cliente, email } = route.params; // Obtiene el id_cliente de los parámetros de la ruta
+
+  const handleChangePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      Alert.alert('Error', 'Por favor, complete todos los campos');
+      return;
+    }
+  
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'Las contraseñas no coinciden');
+      return;
+    }
+  
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=cambiarClaveConPin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `id_cliente=${encodeURIComponent(id_cliente)}&nuevaClave=${encodeURIComponent(newPassword)}`,
+      });
+  
+      const data = await response.json();
+      console.log('Server Response:', data); // Imprime la respuesta del servidor
+  
+      if (data.status === 1) {
+        Alert.alert('Éxito', 'Contraseña cambiada exitosamente', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }
+        ]);
+      } else {
+        Alert.alert('Error', data.error || 'Ocurrió un error al cambiar la contraseña');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Ocurrió un error en la conexión');
+    }
+  };
+  
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -14,11 +64,33 @@ export default function CambiarContra({ navigation }) {
         <Text style={styles.title}>Código de recuperación</Text>
         <Text style={styles.brand}>Sports<Text style={styles.brandHighlight}>Fusion</Text></Text>
         
-        <TextInput style={styles.input} placeholder="Contraseña nueva" secureTextEntry />
-        <TextInput style={styles.input} placeholder="Confirmar contraseña" secureTextEntry />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={{ flex: 1 }}
+            placeholder="Nueva contraseña"
+            onChangeText={text => setNewPassword(text)}
+            value={newPassword}
+            secureTextEntry={!showNewPassword}
+          />
+          <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)} style={styles.eyeIcon}>
+            <Ionicons name={showNewPassword ? "eye" : "eye-off"} size={20} color="gray" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={{ flex: 1 }}
+            placeholder="Confirmar nueva contraseña"
+            onChangeText={text => setConfirmPassword(text)}
+            value={confirmPassword}
+            secureTextEntry={!showConfirmPassword}
+          />
+          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.eyeIcon}>
+            <Ionicons name={showConfirmPassword ? "eye" : "eye-off"} size={20} color="gray" />
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('')}>
-          <Text style={{ color: '#000000', textAlign: 'center', fontWeight: 'bold' }}>Cambiar contraseña</Text>
+        <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
+          <Text style={styles.buttonText}>Cambiar contraseña</Text>
         </TouchableOpacity>
 
         <View style={styles.footer} />
@@ -54,6 +126,20 @@ const styles = StyleSheet.create({
     borderRadius: 400,
     backgroundColor: '#FFF2CC',
   },
+  passwordContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    height: 50,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 15,
+  },
   logo: {
     width: 100,
     height: 100,
@@ -68,40 +154,26 @@ const styles = StyleSheet.create({
   brand: {
     fontSize: 40,
     fontWeight: 'bold',
-    marginBottom: 30, // Ajusta este valor para el espacio deseado
+    marginBottom: 30,
   },
   brandHighlight: {
     color: '#FFA500',
   },
-  input: {
-    width: '100%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 15,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    color: '#007BFF',
-    marginBottom: 20,
-  },
-  footer: {
-    marginTop: 20,
-  },
-  createAccount: {
-    color: '#007BFF',
-  },
-  loginButton: {
-    color: '#FFFFFF',
+  button: {
     backgroundColor: '#FFC600',
-    width: '100%',
+    width: '80%',
     borderRadius: 5,
     height: 40,
     justifyContent: 'center',
-    fontFamily: 'Poppins_700Bold',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#000000',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  footer: {
+    marginTop: 20,
   },
 });
