@@ -1,18 +1,17 @@
-// HistorialCard.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function HistorialCard({ ip, id_detalle_producto, nombre_producto, imagen, precio, cantidad_pedido, fecha_registro, onPress }) {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(id_detalle_producto)}>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image 
-        source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }} 
+        source={{ uri: imagen }} // Usando directamente el prop `imagen` sin modificar
         style={styles.image} 
         resizeMode="cover" 
       />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{nombre_producto}</Text>
-        <Text style={styles.price}>${precio.toFixed(2)}</Text>
+        <Text style={styles.price}>${precio}</Text>
         <Text style={styles.quantity}>Cantidad: {cantidad_pedido}</Text>
         <Text style={styles.date}>Fecha: {new Date(fecha_registro).toLocaleDateString()}</Text>
       </View>
