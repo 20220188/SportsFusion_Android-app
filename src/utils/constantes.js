@@ -8,7 +8,7 @@
 //export const IP = 'http://10.10.2.108';
 
 //IP Musun
-export const IP = 'http://10.10.2.108';
+//export const IP = 'http://10.10.2.108';
 
 //export const IP = 'http://172.20.10.10';
 
@@ -22,7 +22,7 @@ export const IP = 'http://10.10.2.108';
 
 
 //IP pc de Dom
-//export const IP = 'http://10.10.2.137';
+export const IP = 'http://10.10.2.139';
 
 
 //IP pc de Rodri
