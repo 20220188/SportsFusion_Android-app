@@ -28,12 +28,14 @@ export default function CambiarContra({ route, navigation }) {
     }
   
     try {
+
+      const form = new FormData();
+      console.log('Valor id cliente',id_cliente);
+      form.append('id_cliente', id_cliente);
+      form.append('nuevaClave', newPassword);
       const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=cambiarClaveConPin`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `id_cliente=${encodeURIComponent(id_cliente)}&nuevaClave=${encodeURIComponent(newPassword)}`,
+        body: form,
       });
   
       const data = await response.json();

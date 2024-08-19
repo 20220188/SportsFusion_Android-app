@@ -32,8 +32,9 @@ export default function CodigoRecuperacion({ route, navigation }) {
  
        if (data.status === 1) {
          // Si el PIN es válido, mostrar una alerta de éxito y navegar a la pantalla de nueva contraseña
+         console.log(data);
          Alert.alert('Éxito', 'PIN verificado correctamente', [
-           { text: 'OK', onPress: () => navigation.navigate('CambiarContra', { id_cliente: data.id_cliente, email: email }) }
+           { text: 'OK', onPress: () => navigation.navigate('CambiarContra', { id_cliente: data.id_usuario, email: email }) }
          ]);
        } else {
          // Si el PIN no es válido, mostrar una alerta
