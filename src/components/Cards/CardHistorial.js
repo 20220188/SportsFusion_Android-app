@@ -2,19 +2,20 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-export default function HistorialCard({ ip, id_detalle_producto, id_producto, nombre_producto, imagen, precio, cantidad_pedido, fecha_registro, onPress }) {
+export default function HistorialCard({ ip, id_detalle_producto, nombre_producto, imagen, precio, cantidad_pedido, fecha_registro, onPress }) {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
+    <TouchableOpacity style={styles.card} onPress={() => onPress(id_detalle_producto)}>
       <Image 
         source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }} 
         style={styles.image} 
         resizeMode="cover" 
       />
-      <Text style={styles.name}>{id_detalle_producto}</Text>
-      <Text style={styles.name}>{nombre_producto}</Text>
-      <Text style={styles.price}>${precio}</Text>
-      <Text style={styles.name}>${cantidad_pedido}</Text>
-      <Text style={styles.name}>${fecha_registro}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>{nombre_producto}</Text>
+        <Text style={styles.price}>${precio.toFixed(2)}</Text>
+        <Text style={styles.quantity}>Cantidad: {cantidad_pedido}</Text>
+        <Text style={styles.date}>Fecha: {new Date(fecha_registro).toLocaleDateString()}</Text>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -31,25 +32,38 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
     padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   image: {
-    width: '100%',
-    height: 150,
-    width: 150,
+    width: 100,
+    height: 100,
     borderRadius: 10,
-    resizeMode: 'stretch',
-    marginLeft: 85
+    marginRight: 10,
+  },
+  infoContainer: {
+    flex: 1,
   },
   name: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginBottom: 5,
     fontFamily: 'Poppins-Regular',
   },
   price: {
     fontSize: 14,
     color: '#f08080',
-    marginTop: 5,
+    marginBottom: 5,
+    fontFamily: 'Poppins-Regular',
+  },
+  quantity: {
+    fontSize: 14,
+    marginBottom: 5,
+    fontFamily: 'Poppins-Regular',
+  },
+  date: {
+    fontSize: 14,
+    color: '#888',
     fontFamily: 'Poppins-Regular',
   },
 });

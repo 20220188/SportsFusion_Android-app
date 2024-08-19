@@ -1,46 +1,112 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, Alert } from 'react-native';
-import * as Constantes from '../utils/constantes';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
-import Constants from 'expo-constants';
-import HistorialCard from '../components/Cards/CardHistorial'
+import HistorialCard from '../components/Cards/CardHistorial'; // Asumimos que tienes este componente para mostrar el historial
+
+const ip = 'http://your-server-ip'; // Define la IP o URL base de tu servidor
 
 export default function Historial({ navigation }) {
-  const ip = Constantes.IP;
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [nombre, setNombre] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [direccion, setDireccion] = useState('');
-  const [loading, setLoading] = useState(true);
   const [dataHistorialCompra, setDataHistorialCompra] = useState([]);
+  const [selectedHistorial, setSelectedHistorial] = useState(null);
+  const [detallesHistorial, setDetallesHistorial] = useState(null);
 
+  // Función para obtener el historial de compras
   const getHistorialPedido = async () => {
     try {
       const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readHistorial`, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
       const data = await response.json();
       console.log(data, "Data desde getHistorialPedido");
+      
       if (data.status) {
         setDataHistorialCompra(data.dataset);
       } else {
         console.log("No hay detalles del historial disponibles");
       }
     } catch (error) {
-      console.error(error, "Error desde Catch");
+      console.error("Error al obtener el historial de pedidos", error);
       Alert.alert('Error', 'Ocurrió un error al listar los pedidos');
     }
+  };
+  
+
+  // Función para obtener los detalles del historial
+  const getDetallesHistorial = async (idPedido) => {
+    try {
+      const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readDetalleHistorial`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idPedido }),
+      });
+      const data = await response.json();
+      if (data.status) {
+        setDetallesHistorial(data.dataset);
+      } else {
+        console.log("No hay detalles del historial disponibles");
+      }
+    } catch (error) {
+      console.error("Error al obtener detalles del historial", error);
+      Alert.alert('Error', 'Ocurrió un error al obtener los detalles del pedido');
+    }
+  };
+
+  // Efecto para cargar los detalles al cargar la pantalla o al enfocarse en ella
+  useFocusEffect(
+    useCallback(() => {
+      getHistorialPedido();
+    }, [])
+  );
+
+  // Función para manejar el clic en un historial y obtener sus detalles
+  const handleHistorialPress = (idPedido) => {
+    setSelectedHistorial(idPedido);
+    getDetallesHistorial(idPedido);
   };
 
   return (
     <View style={styles.mainContainer}>
-        
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Perfil')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Perfil')}>
         <Icon name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
+
+      <ScrollView style={styles.scrollView}>
+  {dataHistorialCompra.map((item) => (
+    <HistorialCard
+      key={item.id_detalle_producto}
+      ip={ip}
+      id_detalle_producto={item.id_detalle_producto}
+      nombre_producto={item.nombre_producto}
+      imagen={item.imagen}
+      precio={item.precio}
+      cantidad_pedido={item.cantidad_pedido}
+      fecha_registro={item.fecha_registro}
+      onPress={handleHistorialPress}
+    />
+  ))}
+</ScrollView>
+
+      {selectedHistorial && detallesHistorial && (
+        <View style={styles.detailsContainer}>
+          <Text style={styles.detailsTitle}>Detalles del Pedido</Text>
+          {detallesHistorial.map((detalle, index) => (
+            <View key={index} style={styles.detailItem}>
+              <Text>{detalle.nombreProducto}: {detalle.cantidad}</Text>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -48,13 +114,11 @@ export default function Historial({ navigation }) {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    justifyContent: 'space-between',
     backgroundColor: '#fff',
   },
-  
   backButton: {
     position: 'absolute',
-    top: 50, // Ajuste para evitar la superposición con el panel de control
+    top: 50,
     left: 10,
     width: 40,
     height: 40,
@@ -64,133 +128,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 1,
   },
-  container: {
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  profilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  infoContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  label: {
-    color: '#777',
-    fontSize: 14,
-    marginBottom: 4,
-  },
-  infoText: {
-    color: '#000',
-    fontSize: 16,
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingVertical: 4,
-  },
-  nameAndEditContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  editButton: {
-    marginLeft: 8,
-  },
-  logoutButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    marginTop: 120,
-    backgroundColor: 'red',
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  modalContainer: {
+  scrollView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
   },
-  modalView: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
+  detailsContainer: {
+    padding: 16,
   },
-  modalProfilePic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  chooseButton: {
-    marginBottom: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: '#FF69B4',
-  },
-  chooseButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  modalTitle: {
-    fontSize: 20,
+  detailsTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  modalInput: {
-    width: '100%',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 16,
-    fontSize: 16,
-  },
-  confirmButton: {
-    width: '100%',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: '#FF69B4',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  confirmButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  cancelButtonText: {
-    color: '#FF69B4',
-    fontSize: 16,
-  },
-  bottomTabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-  },
-  tabItem: {
-    alignItems: 'center',
-  },
-  tabText: {
-    fontSize: 12,
-    color: '#000',
+  detailItem: {
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
 });
