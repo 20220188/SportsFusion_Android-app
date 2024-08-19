@@ -4,8 +4,9 @@ import * as Constantes from '../utils/constantes';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import Constants from 'expo-constants';
+import HistorialCard from '../components/Cards/CardHistorial'
 
-export default function Perfil({ navigation }) {
+export default function Historial({ navigation }) {
   const ip = Constantes.IP;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,170 +31,16 @@ export default function Perfil({ navigation }) {
       }
     } catch (error) {
       console.error(error, "Error desde Catch");
-      Alert.alert('Error', 'Ocurrió un error al listar las categorias');
+      Alert.alert('Error', 'Ocurrió un error al listar los pedidos');
     }
-  };
-
-  // Función para obtener y mostrar el perfil del usuario
-  const validarSesion = async () => {
-    try {
-      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=readProfile`);
-      const data = await response.json();
-
-      if (data.status) {
-        setNombre(data.dataset.nombre_cliente);
-        setCorreo(data.dataset.correo_cliente);
-        setTelefono(data.dataset.telefono_cliente);
-        setDireccion(data.dataset.dirección_cliente);
-      } else {
-        Alert.alert('Error', data.error);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error al obtener el perfil');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Efecto para cargar los detalles del perfil al cargar la pantalla o al enfocarse en ella
-  useFocusEffect(
-    React.useCallback(() => {
-      validarSesion();
-    }, [])
-  );
-
-  const cerrarSesion = async () => {
-    try {
-      const response = await fetch(`${ip}/sportfusion/api/services/public/cliente.php?action=logOut`, {
-        method: 'GET'
-      });
-
-      const data = await response.json();
-
-      if (data.status) {
-        console.log("Sesión Finalizada");
-        Alert.alert('Sesión cerrada', 'Has cerrado sesión exitosamente', [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate('Login') // Navegar a la pantalla de inicio de sesión
-          }
-        ]);
-      } else {
-        console.log('No se pudo eliminar la sesión');
-      }
-    } catch (error) {
-      console.error('Error desde Catch', error);
-      Alert.alert('Error', 'Ocurrió un error al cerrar sesión');
-    }
-  };
-
-  // Función para manejar la actualización de los datos del perfil
-  const handleEditProfile = async () => {
-    try {
-      const formData = new FormData();
-
-      formData.append('nombreclientePerfil', nombre);
-      formData.append('correoclientePerfil', correo);
-      formData.append('telefonoclientePerfil', telefono);
-      formData.append('direccionclientePerfil', direccion);
-     
-      const url = (`${ip}/sportfusion/api/services/public/cliente.php?action=editProfile`);
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.status) {
-        Alert.alert('Perfil actualizado', 'Los datos del perfil han sido actualizados exitosamente');
-        setModalVisible(false); // Cerrar el modal
-      } else {
-        Alert.alert('Error', 'No se pudo actualizar el perfil');
-      }
-    } catch (error) {
-      console.log(error)
-      Alert.alert('Error', 'Ocurrió un error al actualizar el perfil');
-    }
-  };
-
-  const handleSaveProfile = () => {
-    setModalVisible(true);
   };
 
   return (
     <View style={styles.mainContainer}>
         
-      <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Perfil')}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Perfil')}>
         <Icon name="arrow-back" size={24} color="#000" />
       </TouchableOpacity>
-        <View style={styles.profileContainer}>
-          <Image
-            source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
-            style={styles.profilePic}
-          />
-          
-          <View style={styles.infoContainer}>
-            <View style={styles.nameAndEditContainer}>
-              
-            </View>
-          </View>
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalView}>
-              <Image
-                source={{ uri: 'https://example.com/profile-pic-url' }} // Reemplaza con la URL de la imagen de perfil
-                style={styles.modalProfilePic}
-              />
-              <TouchableOpacity style={styles.chooseButton}>
-                <Text style={styles.chooseButtonText}>Escoger</Text>
-              </TouchableOpacity>
-              <Text style={styles.modalTitle}>Editar perfil</Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Nombre"
-                value={nombre}
-                onChangeText={setNombre}
-              />
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Correo"
-                value={correo}
-                onChangeText={setCorreo}
-              />
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Teléfono"
-                value={telefono}
-                onChangeText={setTelefono}
-              />
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Dirección"
-                value={direccion}
-                onChangeText={setDireccion}
-              />
-          
-              <TouchableOpacity style={styles.confirmButton} onPress={handleEditProfile}>
-                <Text style={styles.confirmButtonText}>Confirmar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </ScrollView>
     </View>
   );
 }

@@ -14,25 +14,6 @@ export default function Perfil({ navigation }) {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [loading, setLoading] = useState(true);
-  const [dataHistorialCompra, setDataHistorialCompra] = useState([]);
-
-  const getHistorialPedido = async () => {
-    try {
-      const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readHistorial`, {
-        method: 'GET',
-      });
-      const data = await response.json();
-      console.log(data, "Data desde getHistorialPedido");
-      if (data.status) {
-        setDataHistorialCompra(data.dataset);
-      } else {
-        console.log("No hay detalles del historial disponibles");
-      }
-    } catch (error) {
-      console.error(error, "Error desde Catch");
-      Alert.alert('Error', 'Ocurrió un error al listar las categorias');
-    }
-  };
 
   // Función para obtener y mostrar el perfil del usuario
   const validarSesion = async () => {
@@ -166,14 +147,15 @@ export default function Perfil({ navigation }) {
             />
           </View>
         </View>
+ <TouchableOpacity style={styles.historialButtom} onPress={() => navigation.navigate('HistorialCompra')}>
+          <Text style={styles.historialButtomText}>Historial de compras</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
           <Text style={styles.logoutButtonText}>Cerrar Sesión dom</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={styles.logoutButtonText}>Historial de compras</Text>
-        </TouchableOpacity>
+       
         
 
         <Modal
@@ -300,7 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     alignItems: 'center',
-    marginTop: 120,
+    marginTop: 30,
     backgroundColor: 'red',
   },
   logoutButtonText: {
@@ -382,5 +364,19 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 12,
     color: '#000',
+  },
+  historialButtom: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 30,
+    marginLeft: 55,
+    backgroundColor: 'pink',
+    width: 250,
+  },
+  historialButtomText: {
+    color: 'black',
+    fontSize: 16,
   },
 });

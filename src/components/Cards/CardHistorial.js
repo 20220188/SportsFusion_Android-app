@@ -2,75 +2,20 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-const fetchHistorial = async () => {
-    try {
-      const response = await fetch(`${ip}/sportfusion/api/services/public/pedido.php?action=readHistorial`);
-      const data = await response.json();
-      if (data.dataset) {
-        setPedido(data.dataset);
-        setFilteredProducts(data.dataset);
-      } else {
-        Alert.alert('Error', 'Ocurrió un error al obtener las compras');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error al obtener las compras');
-    }
-  };
-
-export default function HistorialCard({ ip, id_detalle_producto, id_producto, nombre_producto, imagen, precio, onPress }) {
+export default function HistorialCard({ ip, id_detalle_producto, id_producto, nombre_producto, imagen, precio, cantidad_pedido, fecha_registro, onPress }) {
   return (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>Nombre: {item.nombre_producto}</Text>
-      <Text style={styles.itemText}>Precio: ${item.precio}</Text>
-      <Text style={styles.itemText}>Cantidad: {item.cantidad_pedido}</Text>
-      <Text style={styles.itemText}>Fecha: {item.fecha_pedido}</Text>
+    <TouchableOpacity style={styles.card} onPress={() => onPress(id_producto)}>
       <Image 
         source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }} 
         style={styles.image} 
         resizeMode="cover" 
       />
-      <TouchableOpacity style={styles.modifyButton}
-        onPress={() => {
-          setNewQuantity(item.cantidad_producto ? item.cantidad_producto.toString() : '');
-          setUpdateModalVisible(true);
-        }}
-      >
-        <Text style={styles.buttonText}>Agregar Valoración</Text>
-      </TouchableOpacity>
-
-      <Modal
-        visible={updateModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setUpdateModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Agregar Valoración</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={newQuantity}
-              onChangeText={setNewQuantity}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={() => handleUpdateDetalleCarrito(item.id_detalle, newQuantity)}
-              >
-                <Text style={styles.buttonText}>Guardar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setUpdateModalVisible(false)}
-              >
-                <Text style={styles.buttonText}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </View>
+      <Text style={styles.name}>{id_detalle_producto}</Text>
+      <Text style={styles.name}>{nombre_producto}</Text>
+      <Text style={styles.price}>${precio}</Text>
+      <Text style={styles.name}>${cantidad_pedido}</Text>
+      <Text style={styles.name}>${fecha_registro}</Text>
+    </TouchableOpacity>
   );
 }
 
