@@ -5,7 +5,7 @@ export default function HistorialCard({ ip, id_detalle_producto, nombre_producto
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image 
-        source={{ uri: imagen }} // Usando directamente el prop `imagen` sin modificar
+        source={{ uri: `${ip}/sportfusion/api/images/productos/${imagen}` }}  // Usando directamente el prop `imagen` sin modificar
         style={styles.image} 
         resizeMode="cover" 
       />
