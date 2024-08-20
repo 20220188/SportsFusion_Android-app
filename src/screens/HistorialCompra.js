@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import HistorialCard from '../components/Cards/CardHistorial';
 import * as Constantes from '../utils/constantes';
-import { AirbnbRating } from 'react-native-ratings'; // Alternativa
+import { AirbnbRating } from 'react-native-ratings';
 
 export default function Historial({ navigation }) {
   const ip = Constantes.IP;
@@ -57,6 +57,7 @@ export default function Historial({ navigation }) {
       });
 
       const text = await response.text();
+      console.log("Detalles Historial Response:", text); // Añadido para depuración
       const data = JSON.parse(text);
 
       if (data.status) {
@@ -82,16 +83,39 @@ export default function Historial({ navigation }) {
     setModalVisible(true);
   };
 
-  const handleSubmit = () => {
-    Alert.alert('Gracias', 'Tu valoración ha sido enviada.');
-    setModalVisible(false);
-    console.log('valor seleccionado', rating);
-    setRating(0);
-    setComment('');
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append('Comentario', comment);
+      formData.append('Valoracion', rating);
+      formData.append('idDetalle', selectedProduct.id_pedido);
+      
+     
+      const url = (`${ip}/sportfusion/api/services/public/valoracion.php?action=createRowValoracionMovil`);
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log("Submit Valoracion Response:", data); // Añadido para depuración
+
+      if (data.status) {
+        Alert.alert('Gracias', 'Tu valoración ha sido enviada.');
+        setModalVisible(false);
+        setRating(0);
+        setComment('');
+      } else {
+        Alert.alert('Error', 'No se pudo enviar la valoración');
+      }
+    } catch (error) {
+      console.error('Error al enviar la valoración:', error);
+      Alert.alert('Error', 'Ocurrió un error al enviar la valoración');
+    }
   };
 
   const renderItem = (item) => {
-    // Calcula el subtotal de todos los productos en el detalle del pedido
     const productos = detallesHistorial[item.id_pedido];
     const subtotal = productos?.reduce((total, detalle) => total + (detalle.precio_pedido * detalle.cantidad_pedido), 0);
     
@@ -120,7 +144,6 @@ export default function Historial({ navigation }) {
                 </TouchableOpacity>
               </View>
             ))}
-            {/* Muestra el subtotal solo una vez por detalle de compra */}
             <Text style={styles.subtotalText}>Subtotal: {subtotal}</Text>
           </View>
         )}
@@ -238,58 +261,51 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4,
   },
   productDetail: {
     fontSize: 14,
-    color: '#666',
+    color: '#555',
   },
   productImage: {
-    width: '100%',
-    height: 150,
-    marginVertical: 10,
-  },
-  subtotalText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 10,
+    width: 100,
+    height: 100,
+    marginVertical: 8,
   },
   valorarButton: {
-    marginTop: 10,
-    padding: 10,
     backgroundColor: '#007bff',
+    padding: 10,
     borderRadius: 5,
+    marginTop: 8,
     alignItems: 'center',
-    marginBottom: 15,
   },
   valorarButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
+  },
+  subtotalText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 8,
   },
   noDataText: {
+    fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
-    color: '#666',
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: '#fff',
-    borderRadius: 8,
     padding: 20,
+    borderRadius: 10,
     width: '80%',
     alignItems: 'center',
   },
@@ -297,22 +313,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
   modalProduct: {
     fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 10,
+    color: '#333',
   },
   textInput: {
     width: '100%',
     height: 100,
-    borderColor: '#ddd',
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    textAlignVertical: 'top',
   },
   submitButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#28a745',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -321,15 +341,18 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
   closeButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#dc3545',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   closeButtonText: {
+    color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
+
