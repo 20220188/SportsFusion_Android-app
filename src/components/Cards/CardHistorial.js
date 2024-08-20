@@ -7,7 +7,7 @@ export default function HistorialCard({ ip, id_detalle_producto, nombre_producto
       <Image source={{ uri: `${ip}/images/${imagen}` }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>{nombre_producto}</Text>
-        <Text>Fecha: {fecha_registro}</Text>
+        <Text style={styles.title}>Fecha: {fecha_registro}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -15,8 +15,8 @@ export default function HistorialCard({ ip, id_detalle_producto, nombre_producto
 
 const styles = StyleSheet.create({
   card: {
-    padding: 16,
-    marginLeft:-15,
+    marginLeft:1,
+    marginBottom:5,
   },
   title: {
     fontWeight: 'bold',

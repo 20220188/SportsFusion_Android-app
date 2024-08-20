@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Alert, Modal, TextInput, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import HistorialCard from '../components/Cards/CardHistorial';
@@ -27,24 +27,16 @@ export default function Historial({ navigation }) {
       });
 
       if (!response.ok) {
-        console.error(`Error HTTP: ${response.status} ${response.statusText}`);
-        const errorText = await response.text();
-        console.error("Respuesta de error:", errorText);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Data desde getHistorialPedido:", data);
 
       if (data.status) {
         setDataHistorialCompra(data.dataset);
-        console.log("Historial cargado correctamente:", data.dataset);
-
         data.dataset.forEach(async (item) => {
           await getDetallesHistorial(item.id_pedido);
         });
-      } else {
-        console.log("No hay detalles del historial disponibles");
       }
     } catch (error) {
       console.error("Error al obtener el historial de pedidos", error);
@@ -65,20 +57,13 @@ export default function Historial({ navigation }) {
       });
 
       const text = await response.text();
-      console.log("Respuesta del servidor (raw):", text);
+      const data = JSON.parse(text);
 
-      try {
-        const data = JSON.parse(text);
-        if (data.status) {
-          setDetallesHistorial((prevDetalles) => ({
-            ...prevDetalles,
-            [id_pedido]: data.dataset,
-          }));
-        } else {
-          console.log("Error en los detalles del historial:", data.error);
-        }
-      } catch (jsonError) {
-        console.error("Error al parsear JSON:", jsonError);
+      if (data.status) {
+        setDetallesHistorial((prevDetalles) => ({
+          ...prevDetalles,
+          [id_pedido]: data.dataset,
+        }));
       }
     } catch (error) {
       console.error("Error al obtener detalles del historial:", error);
@@ -98,40 +83,49 @@ export default function Historial({ navigation }) {
   };
 
   const handleSubmit = () => {
-    console.log("Calificación:", rating);
-    console.log("Comentario:", comment);
     Alert.alert('Gracias', 'Tu valoración ha sido enviada.');
     setModalVisible(false);
     setRating(0);
     setComment('');
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.historialContainer}>
-      {detallesHistorial[item.id_pedido] && (
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>Detalles del Pedido</Text>
-          {detallesHistorial[item.id_pedido].map((detalle, index) => (
-            <View key={index} style={styles.detailItem}>
-              <Text style={styles.productName}>Producto: {detalle.nombre_producto}</Text>
-              <Text style={styles.productDetail}>Cantidad de compra: {detalle.cantidad_pedido}</Text>
-              <Text style={styles.productDetail}>Precio de compra: {detalle.precio_pedido}</Text>
-              <Text style={styles.productDetail}>Imagen {detalle.imagen}</Text>
-              <HistorialCard
-                fecha_registro={item.fecha_registro}
-              />
-              <TouchableOpacity
-                style={styles.valorarButton}
-                onPress={() => handleValoracion(item.id_pedido, detalle.nombre_producto)}
-              >
-                <Text style={styles.valorarButtonText}>Valorar producto</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
-  );
+  const renderItem = (item) => {
+    // Calcula el subtotal de todos los productos en el detalle del pedido
+    const productos = detallesHistorial[item.id_pedido];
+    const subtotal = productos?.reduce((total, detalle) => total + (detalle.precio_pedido * detalle.cantidad_pedido), 0);
+    
+    return (
+      <View key={item.id_pedido} style={styles.historialContainer}>
+        {productos && (
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailsTitle}>Detalles del Pedido</Text>
+            <HistorialCard fecha_registro={item.fecha_registro} />
+            {productos.map((detalle, index) => (
+              <View key={index} style={styles.detailItem}>
+                <Text style={styles.productName}>Producto: {detalle.nombre_producto}</Text>
+                <Text style={styles.productDetail}>Cantidad de compra: {detalle.cantidad_pedido}</Text>
+                <Text style={styles.productDetail}>Precio unitario: {detalle.precio_pedido}</Text>
+                <Text style={styles.productDetail}>Precio de compra: {detalle.precio_pedido * detalle.cantidad_pedido}</Text>
+                <Image
+                  source={{ uri: `${ip}/sportfusion/api/images/productos/${detalle.imagen}` }}
+                  style={styles.productImage}
+                  resizeMode="contain"
+                />
+                <TouchableOpacity
+                  style={styles.valorarButton}
+                  onPress={() => handleValoracion(item.id_pedido, detalle.nombre_producto)}
+                >
+                  <Text style={styles.valorarButtonText}>Valorar producto</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+            {/* Muestra el subtotal solo una vez por detalle de compra */}
+            <Text style={styles.subtotalText}>Subtotal: {subtotal}</Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -142,13 +136,12 @@ export default function Historial({ navigation }) {
       {loading ? (
         <ActivityIndicator style={styles.loader} size="large" color="#0000ff" />
       ) : (
-        <FlatList
-          data={dataHistorialCompra}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id_pedido.toString()}
-          contentContainerStyle={styles.scrollView}
-          ListEmptyComponent={<Text style={styles.noDataText}>No hay datos de historial disponibles.</Text>}
-        />
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          {dataHistorialCompra.map((item) => renderItem(item))}
+          {dataHistorialCompra.length === 0 && (
+            <Text style={styles.noDataText}>No hay datos de historial disponibles.</Text>
+          )}
+        </ScrollView>
       )}
 
       <Modal
@@ -216,7 +209,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   scrollView: {
-    flex: 1,
     padding: 16,
     paddingTop: 90,
   },
@@ -244,10 +236,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#333',
+    marginBottom: 4,
   },
   productDetail: {
     fontSize: 14,
     color: '#666',
+  },
+  productImage: {
+    width: '100%',
+    height: 150,
+    marginVertical: 10,
+  },
+  subtotalText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
   },
   valorarButton: {
     marginTop: 10,
@@ -255,6 +259,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 15,
   },
   valorarButtonText: {
     color: '#fff',
