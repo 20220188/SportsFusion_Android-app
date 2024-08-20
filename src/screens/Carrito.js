@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, FlatList, Alert, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, FlatList, Alert, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Constants from 'expo-constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as Constantes from '../utils/constantes';
 import CarritoCard from '../components/Cards/CardCarrito';
+
+// Importa la imagen aquí
+import emptyCartImage from '../img/carrito.png'; // Asegúrate de que la ruta sea correcta
 
 const Carrito = ({ navigation }) => {
   const [dataDetalleCarrito, setDataDetalleCarrito] = useState([]);
@@ -33,7 +36,7 @@ const Carrito = ({ navigation }) => {
       if (data.status) {
         setDataDetalleCarrito(data.dataset);
       } else {
-        console.log("No hay detalles del carrito disponibles");
+        console.log("No hay items en el carrito disponibles");
       }
     } catch (error) {
       console.error(error, "Error desde Catch");
@@ -116,7 +119,10 @@ const Carrito = ({ navigation }) => {
           contentContainerStyle={styles.flatListContent}
         />
       ) : (
-        <Text style={styles.titleDetalle}>No hay detalles del carrito disponibles.</Text>
+        <View style={styles.emptyCartContainer}>
+          <Image source={emptyCartImage} style={styles.emptyCartImage} />
+          <Text style={styles.titleDetalle}>No hay items en el carrito.</Text>
+        </View>
       )}
 
       {dataDetalleCarrito.length > 0 && (
@@ -151,7 +157,7 @@ export default Carrito;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EAD8C0',
+    backgroundColor: '#ffff',
     paddingTop: Constants.statusBarHeight + 40,
     paddingHorizontal: 16,
   },
@@ -160,14 +166,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 16,
-    color: '#5C3D2E',
+    color: '#000000',
   },
   titleDetalle: {
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
     marginVertical: 16,
-    color: '#5C3D2E',
+    color: '#000000',
   },
   backButton: {
     position: 'absolute',
@@ -179,11 +185,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backButtonText: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   bottomTabContainer: {
     position: 'absolute',
@@ -221,5 +222,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 8,
     marginVertical: 8,
+  },
+  emptyCartContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  emptyCartImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
 });

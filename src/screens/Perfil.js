@@ -152,7 +152,7 @@ export default function Perfil({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutButton} onPress={cerrarSesion}>
-          <Text style={styles.logoutButtonText}>Cerrar Sesión dom</Text>
+          <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
         </TouchableOpacity>
         
        

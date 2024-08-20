@@ -85,6 +85,7 @@ export default function Historial({ navigation }) {
   const handleSubmit = () => {
     Alert.alert('Gracias', 'Tu valoración ha sido enviada.');
     setModalVisible(false);
+    console.log('valor seleccionado', rating);
     setRating(0);
     setComment('');
   };
