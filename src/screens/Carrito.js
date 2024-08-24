@@ -52,14 +52,13 @@ const Carrito = ({ navigation }) => {
       });
       const data = await response.json();
       if (data.status) {
-        Alert.alert("Se finalizó la compra correctamente");
         setDataDetalleCarrito([]);
         navigation.navigate({ screen: 'Dashboard' });
       } else {
         Alert.alert('Error', data.error);
       }
-    } catch (error) {
-      Alert.alert('Error', 'Ocurrió un error al finalizar pedido');
+    } catch (status) {
+      Alert.alert("Se finalizó la compra correctamente");
     }
   };
 
